@@ -5,6 +5,15 @@ export const PERIODOS = [7, 30, 90] as const;
 export type PeriodoDias = (typeof PERIODOS)[number];
 export const PERIODO_PADRAO: PeriodoDias = 30;
 
+/** Tela de onde o usuário chegou à visão do gerente, para o link de voltar. */
+export type OrigemNavegacao = "executiva" | "sistemas";
+
+/** Lê a origem da URL (?de=sistemas). Sem origem válida, volta para a visão executiva. */
+export function lerOrigem(valor: string | string[] | undefined): OrigemNavegacao {
+  const texto = Array.isArray(valor) ? valor[0] : valor;
+  return texto === "sistemas" ? "sistemas" : "executiva";
+}
+
 /** Intervalo [inicio, fim) em instantes. */
 export interface Janela {
   inicio: Instante;

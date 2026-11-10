@@ -93,6 +93,11 @@ Cada decisão traz o contexto e o porquê, para que possa ser explicada a um ges
 **Decisão:** manter a mesma regra do semáforo também por funcionalidade e dizer isso no cabeçalho do cartão ("o status também considera os defeitos em aberto").
 **Por quê:** uma taxa alta num período longo pode esconder um problema que começou há 3 dias. A regra única evita exceções difíceis de explicar.
 
+### D19. "Voltar" leva para a tela de origem
+**Contexto:** sugestão de quem validou a Fase 3. Ao entrar no Pix pela lista de Sistemas, o link "‹ Visão executiva" levava para outra tela, e não de volta à lista.
+**Decisão:** a lista de Sistemas abre a visão do gerente com `?de=sistemas`, e o link passa a ser "‹ Sistemas". Vindo da visão executiva (ou sem origem), continua "‹ Visão executiva", como no mockup. A origem é preservada ao trocar o período.
+**Alternativa descartada:** usar o histórico do navegador (`history.back()`). Quebra quando a página é aberta por um link compartilhado e depende de JavaScript.
+
 ---
 
 ## Técnicas

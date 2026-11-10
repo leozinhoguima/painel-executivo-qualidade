@@ -8,7 +8,7 @@ import { IndicadoresGerente } from "@/componentes/visoes/gerente/IndicadoresGere
 import { SucessoPorFuncionalidade } from "@/componentes/visoes/gerente/SucessoPorFuncionalidade";
 import { TabelaDefeitos } from "@/componentes/visoes/gerente/TabelaDefeitos";
 import { carregarBase } from "@/dados/repositorio";
-import { lerPeriodo } from "@/dominio/regras/periodo";
+import { lerOrigem, lerPeriodo } from "@/dominio/regras/periodo";
 import { montarVisaoGerente } from "@/dominio/visoes/gerente";
 import { formatarJanela } from "@/lib/formatacao";
 
@@ -20,14 +20,17 @@ export async function generateMetadata(props: PageProps<"/sistemas/[sistemaId]">
 
 export default async function VisaoGerente(props: PageProps<"/sistemas/[sistemaId]">) {
   const { sistemaId } = await props.params;
-  const periodo = lerPeriodo((await props.searchParams).periodo);
+  const parametros = await props.searchParams;
+  const periodo = lerPeriodo(parametros.periodo);
+  const origem = lerOrigem(parametros.de);
   const base = carregarBase();
 
   const sistema = base.catalogo.sistemas.find((s) => s.id === sistemaId);
   if (!sistema) notFound();
 
   const visao = montarVisaoGerente(base, sistemaId, periodo);
-  const voltar = { href: "/", rotulo: "Visão executiva" };
+  const voltar =
+    origem === "sistemas" ? { href: "/sistemas", rotulo: "Sistemas" } : { href: "/", rotulo: "Visão executiva" };
 
   if (!visao) {
     return (
@@ -53,7 +56,13 @@ export default async function VisaoGerente(props: PageProps<"/sistemas/[sistemaI
           </>
         }
         subtitulo={`Responsável: ${sistema.area} · Últimos ${periodo} dias (${formatarJanela(visao.janela)})`}
-        controles={<SeletorPeriodo atual={periodo} caminho={`/sistemas/${sistema.id}`} />}
+        controles={
+          <SeletorPeriodo
+            atual={periodo}
+            caminho={`/sistemas/${sistema.id}`}
+            parametrosExtras={origem === "sistemas" ? "&de=sistemas" : ""}
+          />
+        }
       />
       <IndicadoresGerente visao={visao} />
       <SucessoPorFuncionalidade linhas={visao.funcionalidades} />

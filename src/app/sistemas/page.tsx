@@ -36,7 +36,7 @@ export default function Sistemas() {
           {visao.prontidao.map((linha) => (
             <li key={linha.sistema.id}>
               <Link
-                href={`/sistemas/${linha.sistema.id}`}
+                href={`/sistemas/${linha.sistema.id}?de=sistemas`}
                 className="group -mx-2 flex min-h-[72px] flex-wrap items-center gap-x-4 gap-y-1 rounded-lg px-2 py-3 hover:bg-fundo"
               >
                 <span className="min-w-[200px] flex-1">

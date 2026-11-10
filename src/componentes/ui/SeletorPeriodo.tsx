@@ -5,7 +5,16 @@ import { PERIODOS, type PeriodoDias } from "@/dominio/regras/periodo";
  * Botões agrupados de período (7, 30, 90 dias). São links (?periodo=N):
  * o recorte fica na URL e pode ser compartilhado.
  */
-export function SeletorPeriodo({ atual, caminho }: { atual: PeriodoDias; caminho: string }) {
+export function SeletorPeriodo({
+  atual,
+  caminho,
+  parametrosExtras = "",
+}: {
+  atual: PeriodoDias;
+  caminho: string;
+  /** Parâmetros preservados ao trocar de período (ex.: "&de=sistemas"). */
+  parametrosExtras?: string;
+}) {
   return (
     <nav aria-label="Período de análise" className="w-fit">
       <ul className="flex overflow-hidden rounded-lg border border-borda bg-cartao">
@@ -14,7 +23,7 @@ export function SeletorPeriodo({ atual, caminho }: { atual: PeriodoDias; caminho
           return (
             <li key={dias} className="border-borda not-first:border-l">
               <Link
-                href={`${caminho}?periodo=${dias}`}
+                href={`${caminho}?periodo=${dias}${parametrosExtras}`}
                 scroll={false}
                 aria-current={ativo ? "true" : undefined}
                 className={`numeros flex min-h-11 items-center px-4 text-[14px] whitespace-nowrap ${

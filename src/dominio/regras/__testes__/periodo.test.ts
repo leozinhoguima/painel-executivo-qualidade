@@ -1,6 +1,14 @@
 import { describe, expect, it } from "vitest";
 import { DIA_MS } from "@/lib/datas";
-import { janelaAnterior, janelaMovel, lerPeriodo } from "../periodo";
+import { janelaAnterior, janelaMovel, lerOrigem, lerPeriodo } from "../periodo";
+
+describe("origem da navegação (link de voltar)", () => {
+  it("volta para Sistemas só quando a origem é a lista de sistemas", () => {
+    expect(lerOrigem("sistemas")).toBe("sistemas");
+    expect(lerOrigem(undefined)).toBe("executiva");
+    expect(lerOrigem("qualquer")).toBe("executiva");
+  });
+});
 
 describe("período de análise", () => {
   it("aceita 7, 30 e 90 dias; qualquer outro valor vira 30", () => {
