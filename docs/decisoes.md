@@ -98,6 +98,15 @@ Cada decisão traz o contexto e o porquê, para que possa ser explicada a um ges
 **Decisão:** a lista de Sistemas abre a visão do gerente com `?de=sistemas`, e o link passa a ser "‹ Sistemas". Vindo da visão executiva (ou sem origem), continua "‹ Visão executiva", como no mockup. A origem é preservada ao trocar o período.
 **Alternativa descartada:** usar o histórico do navegador (`history.back()`). Quebra quando a página é aberta por um link compartilhado e depende de JavaScript.
 
+### D20. Visão técnica: última semana por padrão, mais recentes primeiro
+**Decisão:** `/execucoes` abre nos últimos 7 dias, com todos os sistemas e resultados, da execução mais recente para a mais antiga, 50 por página. Filtros: período, sistema, funcionalidade e resultado. Cada falha mostra a mensagem técnica original **e**, abaixo, a tradução de negócio ("→ Falha na validação de documentos do cliente").
+**Por quê:** é a tela de quem investiga: o que aconteceu por último importa mais. Exibir as duas mensagens lado a lado deixa a camada de tradução visível e auditável.
+**Detalhes:** com o filtro "Somente falhas" ou "Somente sucessos", o resumo mostra só a contagem, porque a taxa seria sempre 0% ou 100%. Uma funcionalidade de outro sistema é ignorada, e uma página além do fim mostra a última.
+
+### D21. Do defeito à mensagem técnica em um clique
+**Decisão:** na tabela de defeitos da visão do gerente, a funcionalidade é um link para as falhas dela na visão técnica, no mesmo período.
+**Por quê:** liga os três níveis (diretor → gerente → técnico). O gestor vê o problema em linguagem de negócio e, se precisar, o time técnico chega à mensagem original sem procurar.
+
 ---
 
 ## Técnicas
@@ -157,6 +166,10 @@ Cada decisão traz o contexto e o porquê, para que possa ser explicada a um ges
 **Decisão:** o seletor de período é um conjunto de links (`?periodo=7|30|90`), e a página lê o parâmetro no servidor. Por isso a rota `/sistemas/[sistemaId]` é renderizada sob demanda; as demais continuam estáticas.
 **Alternativa:** pré-calcular os 3 períodos e alternar no navegador. Mantém a página estática, mas envia três vezes mais dados e duplica a lógica de estado.
 **Por quê:** o link compartilhado abre exatamente o mesmo recorte, funciona sem JavaScript, e o custo é baixo (dados em cache no servidor, cálculo de milissegundos). Um valor inválido na URL volta para 30 dias, sem erro.
+
+### T16. Filtros como formulário GET e paginação no servidor
+**Decisão:** os filtros da visão técnica são um `<form method="get">` com `<select>` nativos e botão "Aplicar filtros". A filtragem e a paginação acontecem no servidor; o navegador recebe só as 50 linhas da página.
+**Por quê:** 90 dias somam cerca de 13.500 execuções, e enviar tudo ao navegador deixaria a página pesada. O formulário nativo funciona sem JavaScript, é acessível por teclado e leitor de tela, e o recorte fica na URL. Valores inválidos na URL voltam ao padrão, sem erro.
 
 ### T14. Nomes de arquivo dos mockups
 **Decisão:** renomeados para `visao-diretor.png` e `visao-gerente.png` (sem acentos, espaços ou `@`).

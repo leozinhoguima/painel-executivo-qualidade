@@ -62,6 +62,12 @@ export function formatarTempoAberto(dias: number, genero: "o" | "a" = "a"): stri
   return `${aberto} há ${pluralizar(dias, "dia", "dias")}`;
 }
 
+/** 850 → "850 ms"; 1234 → "1,2 s"; 15000 → "15,0 s" */
+export function formatarDuracao(ms: number): string {
+  if (ms < 1000) return `${formatarInteiro(ms)} ms`;
+  return `${formatarDecimal(ms / 1000)} s`;
+}
+
 /** "09/11/2026, 06:00" */
 export function formatarDataHora(instante: Instante): string {
   const l = paraDataLocal(instante);

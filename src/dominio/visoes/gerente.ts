@@ -29,6 +29,7 @@ export interface LinhaFuncionalidade {
 export interface LinhaDefeito {
   codigo: string;
   titulo: string;
+  funcionalidadeId: string;
   funcionalidadeNome: string;
   severidade: Severidade;
   situacao: SituacaoDefeito;
@@ -127,6 +128,7 @@ export function montarVisaoGerente(
     defeitos: abertos.map((d) => ({
       codigo: d.codigo,
       titulo: d.descricaoNegocio,
+      funcionalidadeId: d.funcionalidadeId,
       funcionalidadeNome: nomes.get(d.funcionalidadeId) ?? d.funcionalidadeId,
       severidade: d.severidade,
       situacao: d.situacao,

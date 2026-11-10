@@ -1,10 +1,22 @@
+import Link from "next/link";
 import { Cartao } from "@/componentes/ui/Cartao";
 import { ROTULO_SITUACAO, SeloSeveridade } from "@/componentes/ui/Selos";
 import type { LinhaDefeito } from "@/dominio/visoes/gerente";
 import { pluralizar } from "@/lib/formatacao";
 
-/** Defeitos em aberto do sistema na data da última execução. */
-export function TabelaDefeitos({ defeitos }: { defeitos: LinhaDefeito[] }) {
+/**
+ * Defeitos em aberto do sistema na data da última execução.
+ * A funcionalidade leva às falhas dela na visão técnica (mesmo período).
+ */
+export function TabelaDefeitos({
+  defeitos,
+  sistemaId,
+  periodo,
+}: {
+  defeitos: LinhaDefeito[];
+  sistemaId: string;
+  periodo: number;
+}) {
   return (
     <Cartao titulo="Defeitos em aberto" idTitulo="titulo-defeitos">
       {defeitos.length === 0 ? (
@@ -30,7 +42,13 @@ export function TabelaDefeitos({ defeitos }: { defeitos: LinhaDefeito[] }) {
                   <td className="numeros py-3 pr-4 whitespace-nowrap text-tinta-suave">{d.codigo}</td>
                   <td className="py-3 pr-4">
                     <span className="block font-medium">{d.titulo}</span>
-                    <span className="block text-[12px] text-tinta-suave">{d.funcionalidadeNome}</span>
+                    <Link
+                      href={`/execucoes?periodo=${periodo}&sistema=${sistemaId}&funcionalidade=${d.funcionalidadeId}&resultado=falha`}
+                      className="text-[12px] text-marca hover:underline"
+                    >
+                      {d.funcionalidadeNome}
+                      <span className="sr-only">: ver falhas na visão técnica</span>
+                    </Link>
                   </td>
                   <td className="py-3 pr-4">
                     <SeloSeveridade severidade={d.severidade} />

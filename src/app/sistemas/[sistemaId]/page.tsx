@@ -66,7 +66,7 @@ export default async function VisaoGerente(props: PageProps<"/sistemas/[sistemaI
       />
       <IndicadoresGerente visao={visao} />
       <SucessoPorFuncionalidade linhas={visao.funcionalidades} />
-      <TabelaDefeitos defeitos={visao.defeitos} />
+      <TabelaDefeitos defeitos={visao.defeitos} sistemaId={sistema.id} periodo={periodo} />
     </>
   );
 }
