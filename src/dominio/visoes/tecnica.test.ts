@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { carregarBase } from "@/dados/repositorio";
+import { carregarBaseDemonstracao } from "@/dados/repositorio";
 import { criarBase } from "../regras/__testes__/apoio";
 import { montarVisaoGerente } from "./gerente";
 import {
@@ -10,7 +10,7 @@ import {
   type FiltrosExecucoes,
 } from "./tecnica";
 
-const base = carregarBase();
+const base = carregarBaseDemonstracao();
 const padrao: FiltrosExecucoes = { periodo: 7, sistemaId: null, funcionalidadeId: null, resultado: "todos", pagina: 1 };
 
 describe("leitura dos filtros da URL", () => {

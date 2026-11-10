@@ -1,7 +1,7 @@
 import { janelaMovel, lerPeriodo, type Janela, type PeriodoDias } from "../regras/periodo";
 import { calcularTaxa, noIntervalo } from "../regras/taxa";
 import { traduzirErro } from "../regras/traducao";
-import type { BaseQualidade, Funcionalidade, Instante, Resultado, Sistema } from "../tipos";
+import type { BaseQualidade, Funcionalidade, Instante, OrigemRodada, Resultado, Sistema } from "../tipos";
 
 export const ITENS_POR_PAGINA = 50;
 /** Na visão técnica, o recorte padrão é a última semana. */
@@ -63,6 +63,8 @@ export function consultaDosFiltros(filtros: FiltrosExecucoes, alteracoes: Partia
 export interface LinhaExecucao {
   id: string;
   instante: Instante;
+  /** De onde veio a execução: histórico fictício ou suíte automatizada real. */
+  origem: OrigemRodada;
   sistemaNome: string;
   funcionalidadeNome: string;
   casoId: string;
@@ -110,6 +112,7 @@ export function montarVisaoTecnica(base: BaseQualidade, filtros: FiltrosExecucoe
   const sistemas = new Map(base.catalogo.sistemas.map((s) => [s.id, s]));
   const funcionalidades = new Map(base.catalogo.funcionalidades.map((f) => [f.id, f]));
   const casos = new Map(base.catalogo.casos.map((c) => [c.id, c]));
+  const origens = new Map(base.rodadas.map((r) => [r.id, r.origem]));
 
   // Mais recentes primeiro; dentro da mesma rodada, na ordem do catálogo.
   const ordenadas = [...filtradas].sort((a, b) => b.instante - a.instante || a.casoId.localeCompare(b.casoId));
@@ -119,6 +122,7 @@ export function montarVisaoTecnica(base: BaseQualidade, filtros: FiltrosExecucoe
     return {
       id: e.id,
       instante: e.instante,
+      origem: origens.get(e.rodadaId) ?? "historico-ficticio",
       sistemaNome: sistemas.get(e.sistemaId)?.nome ?? e.sistemaId,
       funcionalidadeNome: funcionalidade?.nome ?? e.funcionalidadeId,
       casoId: e.casoId,

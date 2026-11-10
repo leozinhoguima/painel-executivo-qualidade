@@ -24,7 +24,7 @@ export function TabelaExecucoes({ linhas }: { linhas: LinhaExecucao[] }) {
         <caption className="sr-only">Execuções de teste, da mais recente para a mais antiga</caption>
         <thead>
           <tr className="border-b border-divisor text-[13px] text-tinta-suave">
-            <th scope="col" className="py-2.5 pr-4 font-medium">Data e hora</th>
+            <th scope="col" className="py-2.5 pr-4 font-medium">Data e hora · origem</th>
             <th scope="col" className="py-2.5 pr-4 font-medium">Sistema · funcionalidade</th>
             <th scope="col" className="py-2.5 pr-4 font-medium">Caso de teste</th>
             <th scope="col" className="py-2.5 pr-4 font-medium">Resultado</th>
@@ -35,7 +35,12 @@ export function TabelaExecucoes({ linhas }: { linhas: LinhaExecucao[] }) {
         <tbody className="divide-y divide-divisor align-top">
           {linhas.map((l) => (
             <tr key={l.id} className={l.resultado === "falha" ? "bg-risco-fundo/30" : undefined}>
-              <td className="numeros py-3 pr-4 whitespace-nowrap">{formatarDataHora(l.instante)}</td>
+              <td className="numeros py-3 pr-4 whitespace-nowrap">
+                <span className="block">{formatarDataHora(l.instante)}</span>
+                <span className={`block text-[12px] ${l.origem === "suite-automatizada" ? "font-medium text-marca" : "text-tinta-suave"}`}>
+                  {l.origem === "suite-automatizada" ? "Suíte automatizada" : "Histórico fictício"}
+                </span>
+              </td>
               <td className="py-3 pr-4">
                 <span className="block font-medium">{l.sistemaNome}</span>
                 <span className="block text-[12px] text-tinta-suave">{l.funcionalidadeNome}</span>

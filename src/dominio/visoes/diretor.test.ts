@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { carregarBase } from "@/dados/repositorio";
+import { carregarBaseDemonstracao } from "@/dados/repositorio";
 import { calcularTaxa, noIntervalo } from "../regras/taxa";
 import { criarBase } from "../regras/__testes__/apoio";
 import { montarVisaoDiretor } from "./diretor";
 
 describe("visão do diretor com os dados de demonstração", () => {
-  const base = carregarBase();
+  const base = carregarBaseDemonstracao();
   const visao = montarVisaoDiretor(base);
   if (!visao) throw new Error("dados de demonstração ausentes");
 

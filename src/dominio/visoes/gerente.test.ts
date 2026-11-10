@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { carregarBase } from "@/dados/repositorio";
+import { carregarBaseDemonstracao } from "@/dados/repositorio";
 import { criarBase } from "../regras/__testes__/apoio";
 import { calcularTaxa, noIntervalo } from "../regras/taxa";
 import { montarVisaoDiretor } from "./diretor";
 import { montarVisaoGerente } from "./gerente";
 
-const base = carregarBase();
+const base = carregarBaseDemonstracao();
 
 describe("visão do gerente com os dados de demonstração", () => {
   const visao = montarVisaoGerente(base, "pix", 30);

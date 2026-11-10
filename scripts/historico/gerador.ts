@@ -1,5 +1,5 @@
 import { criarAleatorio } from "@/lib/aleatorio";
-import { HORA_MS } from "@/lib/datas";
+import { HORA_MS, paraIsoLocal } from "@/lib/datas";
 import type { ArquivoExecucoes, Catalogo, ExecucaoArmazenada, RodadaArmazenada } from "@/dominio/tipos";
 import type { Incidente } from "./cenarios";
 
@@ -13,13 +13,6 @@ export interface ParametrosHistorico {
 }
 
 const comFuso = (local: string) => (/[+-]\d\d:\d\d$|Z$/.test(local) ? local : `${local}:00-03:00`);
-
-/** "2026-11-09T06:00:00-03:00" a partir de um instante (fuso fixo −03:00). */
-export function isoLocal(instante: number): string {
-  const d = new Date(instante - 3 * HORA_MS);
-  const p = (n: number) => String(n).padStart(2, "0");
-  return `${d.getUTCFullYear()}-${p(d.getUTCMonth() + 1)}-${p(d.getUTCDate())}T${p(d.getUTCHours())}:${p(d.getUTCMinutes())}:00-03:00`;
-}
 
 /**
  * Gera o histórico fictício de forma determinística: mesma seed e mesmos
@@ -42,7 +35,7 @@ export function gerarHistorico(catalogo: Catalogo, parametros: ParametrosHistori
   const fim = Date.parse(parametros.ultimaRodada);
 
   for (let instante = inicio; instante <= fim; instante += parametros.intervaloHoras * HORA_MS) {
-    const dataHora = isoLocal(instante);
+    const dataHora = paraIsoLocal(instante);
     const execucoes: ExecucaoArmazenada[] = catalogo.casos.map((caso) => {
       const ativo = incidentes.find(
         (i) => i.casosSet.has(caso.id) && instante >= i.inicioMs && instante <= i.fimMs,

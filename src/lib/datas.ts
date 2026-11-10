@@ -34,6 +34,16 @@ export function paraDataLocal(instante: Instante): DataLocal {
   };
 }
 
+/** ISO 8601 no fuso de referência: "2026-11-09T06:00:00-03:00". */
+export function paraIsoLocal(instante: Instante): string {
+  const d = new Date(instante + DESLOCAMENTO_FUSO_MS);
+  const p = (n: number) => String(n).padStart(2, "0");
+  return (
+    `${d.getUTCFullYear()}-${p(d.getUTCMonth() + 1)}-${p(d.getUTCDate())}` +
+    `T${p(d.getUTCHours())}:${p(d.getUTCMinutes())}:${p(d.getUTCSeconds())}-03:00`
+  );
+}
+
 /** Instante da meia-noite local do dia informado. */
 export function instanteLocal(ano: number, mes: number, dia: number, hora = 0, minuto = 0): Instante {
   return Date.UTC(ano, mes - 1, dia, hora, minuto) - DESLOCAMENTO_FUSO_MS;

@@ -113,6 +113,16 @@ Cada decisão traz o contexto e o porquê, para que possa ser explicada a um ges
 **Por quê:** só o parágrafo do resumo, sem números, não basta para quem vai repassar. O texto é gerado por uma função pura e testada, com os mesmos rótulos do painel.
 **O botão "Baixar relatório (PDF)"** do cabeçalho abre esta página; o PDF é salvo pelo "Imprimir ou salvar em PDF". Não abrimos a janela de impressão automaticamente ao entrar, para não surpreender quem só quer ler.
 
+### D24. A API fictícia reproduz os problemas em aberto da narrativa
+**Decisão:** `demo-api/cenarios.json` ativa as mesmas falhas que estão em aberto no histórico: validação de documentos indisponível (502, 85%), QR Code intermitente (500, 30%), devolução parcial com valor integral, comprovante sem data e hora (50%), mensagem genérica no Pix por chave (45%), lentidão no limite do cartão (3,5 s, 80%) e conflito na atualização cadastral (409, 35%).
+**Por quê:** a primeira rodada real continua a história em vez de contradizê-la. Na verificação desta fase, as falhas da rodada real entraram nos **mesmos 7 defeitos** (por exemplo, AC-104 passou de 30 para 33 ocorrências), sem criar códigos novos. Isso mostra que a camada de tradução une o dado fictício e o real.
+**Como "corrigir" um problema na demonstração:** mude `"ativa": false` no cenário e rode `npm run qualidade` algumas vezes, com mais de 4 dias entre a primeira e a última rodada sem falha (ou ajuste a data). O defeito é resolvido sozinho pela regra D08.
+**Realismo:** as falhas agem como bugs de verdade: a mensagem genérica só aparece nas respostas de erro, e a devolução "errada" só é percebida na devolução parcial (na total, o valor coincide).
+
+### D25. A primeira rodada real fica versionada
+**Decisão:** a rodada de 10/11/2026 gerada nesta fase (`data/execucoes/2026-11-10-164526.json`) entra no repositório.
+**Por quê:** é a prova de que o fluxo funciona de ponta a ponta. A partir dela, o painel mostra "Última execução automática: 10/11/2026, 16:45", e a visão técnica identifica essas linhas como "Suíte automatizada".
+
 ### D21. Do defeito à mensagem técnica em um clique
 **Decisão:** na tabela de defeitos da visão do gerente, a funcionalidade é um link para as falhas dela na visão técnica, no mesmo período.
 **Por quê:** liga os três níveis (diretor → gerente → técnico). O gestor vê o problema em linguagem de negócio e, se precisar, o time técnico chega à mensagem original sem procurar.
@@ -184,6 +194,34 @@ Cada decisão traz o contexto e o porquê, para que possa ser explicada a um ges
 ### T17. Impressão com CSS e rótulos no domínio
 **Decisão:** a impressão usa `@page { size: A4; margin: 12mm }` e as variantes `print:` do Tailwind (esconde barra lateral, botões e prévia; compacta espaçamentos). `print-color-adjust: exact` preserva as cores dos selos. A cópia usa `navigator.clipboard`, com alternativa para navegadores sem essa API.
 **Organização:** os rótulos de negócio ("Risco", "Crítica", "Aguardando decisão") foram movidos para `src/dominio/rotulos.ts`, e o texto de variação ("+2,4 pontos vs. …") virou uma função única (`descreverVariacao`), usada pelo painel, pelo gerente e pelo relatório. Assim, a camada de domínio não depende de componentes visuais.
+
+### T18. Playwright Test 1.64.1, somente testes de API
+**Decisão (aprovada):** Playwright Test 1.64.1, com escopo apenas de API (sem navegador). A 1.65.0 tinha 5 dias de publicação; a 1.64.1 é a correção da linha anterior, com um mês de uso, e atende ao `^1.51.1` exigido pelo Next.
+**Por quê:** é a ferramenta mais reconhecida no mercado de QA hoje. O cliente HTTP dela dispensa o download de navegadores (cerca de 150 MB a menos no CI), e o relatório JSON é oficial e estável.
+**Como os testes se ligam ao painel:**
+- cada teste declara a anotação `{ type: "caso", description: "<id do catálogo>" }`, e o título é a descrição técnica do catálogo;
+- as falhas usam mensagens padronizadas ("`POST /pix/qrcode/pagamentos retornou 500 (esperado 201)`", "`Tempo limite de 2000 ms excedido em …`"), sempre com a requisição do catálogo, para que a camada de tradução as reconheça;
+- `retries: 0`: falhas são o objeto de medição, e repetir esconderia instabilidade;
+- um tempo máximo padrão de 3 s por requisição funciona como SLA, e os casos com limite próprio (1 s, 2 s e 5 s) o declaram.
+
+**Execução:** 75 testes em cerca de 5 segundos, com 6 workers. O Playwright sobe a API sozinho (`webServer`).
+
+### T19. API fictícia em Node puro, com sorteio determinístico
+**Decisão:** servidor `node:http`, sem framework, com rotas declaradas no mesmo formato do catálogo (`/cartoes/{id}/limite`). Um teste garante que toda requisição do catálogo tem rota.
+**Sorteio das falhas:** hash da seed + id do caso (cabeçalho `x-caso-teste`) + índice da falha. O resultado não depende da ordem dos testes em paralelo. A seed vem de `DEMO_SEED` ou, por padrão, da data e hora (muda a cada minuto), então cada rodada varia como num ambiente real.
+
+### T20. Importador puro, tolerante e sem duplicatas
+**Decisão:** `src/importacao/playwright.ts` converte o relatório JSON e não depende dos tipos internos do Playwright: lê só os campos necessários e confere cada um.
+- **Avisa sem interromper:** teste sem anotação, caso inexistente, caso repetido, teste pulado e casos do catálogo sem resultado.
+- **Interrompe:** relatório sem a estrutura esperada, nenhum caso reconhecido, ou rodada já importada.
+- O tempo limite do próprio Playwright vira "`Tempo limite de N ms excedido em <requisição>`".
+- O arquivo gerado passa pela mesma validação do histórico, então as telas não distinguem a origem.
+
+**`npm run qualidade`:** roda a suíte e importa. O código de saída 1 do Playwright (há testes falhando) é o esperado; o fluxo só para se o relatório não for gerado.
+
+### T21. Testes de coerência usam só o histórico fictício
+**Decisão:** os testes das visões (`diretor`, `gerente`, `tecnica`, `relatorio`) carregam apenas `historico-ficticio.json` (`carregarBaseDemonstracao`).
+**Por quê:** cada rodada real importada muda a data de referência. Sem isso, os testes quebrariam a cada execução do GitHub Actions sem que nada estivesse errado.
 
 ### T14. Nomes de arquivo dos mockups
 **Decisão:** renomeados para `visao-diretor.png` e `visao-gerente.png` (sem acentos, espaços ou `@`).

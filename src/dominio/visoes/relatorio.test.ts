@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { carregarBase } from "@/dados/repositorio";
+import { carregarBaseDemonstracao } from "@/dados/repositorio";
 import { criarBase } from "../regras/__testes__/apoio";
 import { resumoComoTexto } from "../regras/resumo";
 import { montarVisaoDiretor } from "./diretor";
 import { montarRelatorio } from "./relatorio";
 
-const base = carregarBase();
+const base = carregarBaseDemonstracao();
 const relatorio = montarRelatorio(base);
 if (!relatorio) throw new Error("relatório ausente");
 

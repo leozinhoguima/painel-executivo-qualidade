@@ -1,0 +1,62 @@
+{
+  "descricao": "Falhas SIMULADAS da API fictícia de demonstração do Banco Aurora. Cada falha ativa atinge uma rota com a probabilidade indicada. Para 'corrigir' um problema na demonstração, mude \"ativa\" para false e rode npm run qualidade algumas vezes: o painel resolve o defeito sozinho.",
+  "falhas": [
+    {
+      "nome": "Serviço de validação de documentos indisponível",
+      "rota": "POST /onboarding/documentos/validacao",
+      "tipo": "status",
+      "status": 502,
+      "probabilidade": 0.85,
+      "ativa": true
+    },
+    {
+      "nome": "Erro intermitente no pagamento por QR Code",
+      "rota": "POST /pix/qrcode/pagamentos",
+      "tipo": "status",
+      "status": 500,
+      "probabilidade": 0.3,
+      "ativa": true
+    },
+    {
+      "nome": "Devolução parcial devolve o valor integral",
+      "rota": "POST /pix/devolucoes",
+      "tipo": "valor-incorreto",
+      "campo": "valorDevolvido",
+      "copiarDe": "valorOriginal",
+      "probabilidade": 1,
+      "ativa": true
+    },
+    {
+      "nome": "Comprovante sem data e hora",
+      "rota": "GET /pix/comprovantes/{id}",
+      "tipo": "campo-ausente",
+      "campo": "dataHora",
+      "probabilidade": 0.5,
+      "ativa": true
+    },
+    {
+      "nome": "Mensagem de erro genérica no envio de Pix",
+      "rota": "POST /pix/transferencias",
+      "tipo": "mensagem-generica",
+      "texto": "Erro 0x51",
+      "probabilidade": 0.45,
+      "ativa": true
+    },
+    {
+      "nome": "Lentidão na consulta de limite do cartão",
+      "rota": "GET /cartoes/{id}/limite",
+      "tipo": "lentidao",
+      "atrasoMs": 3500,
+      "probabilidade": 0.8,
+      "ativa": true
+    },
+    {
+      "nome": "Atualização cadastral recusada por conflito",
+      "rota": "PUT /ib/clientes/{id}",
+      "tipo": "status",
+      "status": 409,
+      "probabilidade": 0.35,
+      "ativa": true
+    }
+  ]
+}

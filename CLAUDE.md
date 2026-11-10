@@ -32,25 +32,35 @@ Cada tela responde em segundos: o sistema está pronto para ir ao ar? A qualidad
 | eslint | 9.39.5 (faixa `^9` do template) |
 | vitest (dev) | 4.1.12 — testes unitários das regras |
 | tsx (dev) | 4.23.15 — executa scripts TypeScript |
-
-Framework da suíte de testes da API fictícia: **ainda não definido** (decisão na Fase 6; preferência: Playwright).
+| @playwright/test (dev) | 1.64.1 — suíte de API, sem navegador |
 
 ## Comandos
 
 ```powershell
-npm run dev              # servidor local em http://localhost:| 3 | Visão do gerente (`/sistemas`, `/sistemas/[id]?periodo=7|30|90`) | Concluída (validada) |00
+npm run dev              # servidor local em http://localhost:3000
 npm run lint
 npm run typecheck
 npm test                 # testes unitários (Vitest)
 npm run build
 npm run dados:historico  # regenera data/execucoes/historico-ficticio.json (seed fixa)
+
+npm run qualidade        # FLUXO COMPLETO: suíte Playwright contra a API fictícia + importação
+npm run api:demo         # só a API fictícia (porta 4010; DEMO_SEED fixa o sorteio)
+npm run test:api         # só a suíte (gera test-results/relatorio-playwright.json)
+npm run dados:importar   # só a importação do relatório para data/execucoes/
 ```
+
+Nunca use `sed` para editar tabelas Markdown com `|` ou `&`: use o editor.
 
 ## Estrutura
 
 ```
 data/                      catálogo, traduções, acompanhamento e execuções (JSON)
 scripts/historico/         roteiro de incidentes + gerador determinístico do histórico
+scripts/importacao/        leitura/gravação do relatório; qualidade.ts = fluxo completo
+demo-api/                  API fictícia (node:http) + cenarios.json (falhas configuráveis)
+tests/api/                 suíte Playwright: um teste por caso do catálogo (anotação "caso")
+src/importacao/            conversão pura do relatório JSON do Playwright
 src/dominio/tipos.ts       modelo de dados
 src/dominio/regras/        funções puras: taxa, prontidão, defeitos, tradução, tendência, resumo
 src/dominio/visoes/        montagem dos números de cada tela (ex.: diretor.ts)
@@ -76,7 +86,9 @@ Ao mudar `scripts/historico/cenarios.ts` ou `data/catalogo.json`, rode `npm run 
 - Taxa de sucesso = execuções com sucesso ÷ execuções no período. Meta única: 95%. Meta de correção: até 3 dias (janela de | 3 | Visão do gerente (`/sistemas`, `/sistemas/[id]?periodo=7|30|90`) | Concluída (validada) | dias).
 - Data de referência = última rodada; o diretor vê a última semana fechada (seg–dom) e tendência de 6 semanas; o gerente vê janela móvel de 7/| 3 | Visão do gerente (`/sistemas`, `/sistemas/[id]?periodo=7|30|90`) | Concluída (validada) |/90 dias (padrão 30), comparada com o período anterior. Defeitos em aberto são sempre os da data de referência.
 - Histórico fictício: semanas 33–45/2026, rodadas às 06:00 e 18:00, última em 09/11/2026 06:00, 75 casos de teste, seed fixa, mesmo formato dos dados importados.
-- API fictícia em servidor Node separado (`demo-api/`).
+- API fictícia em servidor Node separado (`demo-api/`), com falhas que espelham os defeitos em aberto da narrativa.
+- Testes de coerência das visões usam só o histórico fictício (`carregarBaseDemonstracao`), para não quebrar quando rodadas reais forem importadas.
+- Mensagens de falha da suíte seguem o formato que `data/traducoes.json` reconhece; ao criar um teste novo, use os helpers de `tests/api/apoio.ts`.
 
 ## Referência visual
 
@@ -91,7 +103,7 @@ Tokens: fundo #F4F6F9, cartão branco com borda #E2E8F0 e raio 12px, texto #0F17
 | 2 | Layout base + modelo de dados + histórico fictício + regras (Vitest) + visão do diretor | Concluída (visual aprovado) |
 | 3 | Visão do gerente (`/sistemas`, `/sistemas/[id]?periodo=7\|30\|90&de=sistemas`) | Concluída (validada) |
 | 4 | Visão técnica (`/execucoes` com filtros de período, sistema, funcionalidade e resultado) | Concluída (validada) |
-| 5 | Relatório executivo (`/relatorio`, uma folha A4, imprimir/PDF e copiar texto) | Concluída — aguardando validação |
-| 6 | API fictícia + suíte de testes + importador do relatório | Pendente |
+| 5 | Relatório executivo (`/relatorio`, uma folha A4, imprimir/PDF e copiar texto) | Concluída (validada) |
+| 6 | API fictícia + suíte Playwright (75 casos) + importador + `npm run qualidade` | Concluída — aguardando validação |
 | 7 | GitHub Actions agendado | Pendente |
 | 8 | README, repositório público e deploy na Vercel | Pendente |
