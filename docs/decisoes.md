@@ -223,6 +223,20 @@ Cada decisão traz o contexto e o porquê, para que possa ser explicada a um ges
 **Decisão:** os testes das visões (`diretor`, `gerente`, `tecnica`, `relatorio`) carregam apenas `historico-ficticio.json` (`carregarBaseDemonstracao`).
 **Por quê:** cada rodada real importada muda a data de referência. Sem isso, os testes quebrariam a cada execução do GitHub Actions sem que nada estivesse errado.
 
+### T22. GitHub Actions: rodada agendada e CI separados
+**Decisão (aprovada):** dois workflows.
+- **Rodada de qualidade** (`qualidade.yml`): todos os dias às 06:00 e às 18:00 em Brasília (09:00 e 21:00 UTC, o mesmo ritmo do histórico), mais execução manual. Roda `npm run qualidade`, guarda o relatório do Playwright como artefato por 14 dias, escreve o resumo da rodada na página da execução e faz commit de `data/execucoes/` como `github-actions[bot]`.
+- **CI** (`ci.yml`): lint, tipos, testes unitários e build a cada push e pull request. Ignora commits que só trazem dados.
+
+**Por quê:** separa "medir a qualidade do sistema testado" de "garantir a qualidade do próprio painel". A rodada não falha quando há testes falhando (isso é o que se mede); só falha se a automação quebrar.
+**Detalhes de robustez:** `concurrency` impede duas rodadas ao mesmo tempo; o push tenta até 3 vezes com `pull --rebase` se houver outro commit no meio tempo; commits feitos com o `GITHUB_TOKEN` não disparam outros workflows, então não há laço. Versões das actions: `checkout`, `setup-node` e `upload-artifact` na v7 (verificadas em 10/11/2026).
+**Correção após o primeiro push:** a checagem de tipos falhou no CI porque `PageProps` e `LayoutProps` são gerados pelo Next em `.next/`, que não existe num ambiente limpo. O script passou a ser `next typegen && tsc --noEmit`, como recomenda a documentação do Next 16.
+**Atenção:** o GitHub desativa workflows agendados de repositórios públicos sem atividade por 60 dias. Os commits automáticos contam como atividade; se o agendamento parar, basta reativá-lo na aba Actions.
+
+### T23. Repositório público sem e-mail pessoal
+**Decisão (aprovada):** os commits usam o e-mail anônimo do GitHub (`…@users.noreply.github.com`), configurado só neste repositório. O autor dos commits feitos antes da publicação foi reescrito localmente, antes do primeiro push, com as datas preservadas.
+**Por quê:** commits públicos expõem o e-mail do autor a robôs de spam e phishing. O e-mail anônimo mantém as contribuições ligadas ao perfil, sem expor o endereço.
+
 ### T14. Nomes de arquivo dos mockups
 **Decisão:** renomeados para `visao-diretor.png` e `visao-gerente.png` (sem acentos, espaços ou `@`).
 **Por quê:** nomes ASCII evitam problemas no Git, em URLs do README e em terminais.
