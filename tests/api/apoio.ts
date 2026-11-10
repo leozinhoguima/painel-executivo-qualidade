@@ -1,4 +1,4 @@
-import { test, type APIRequestContext, type APIResponse } from "@playwright/test";
+import { test as base, type APIRequestContext, type APIResponse } from "@playwright/test";
 import catalogo from "../../data/catalogo.json";
 
 /**
@@ -78,11 +78,23 @@ function criarApi(request: APIRequestContext, caso: Caso): Api {
   };
 }
 
-/** Declara o teste de um caso do catálogo. */
-export function caso(id: string, corpo: (api: Api) => Promise<void>) {
+/**
+ * Título e anotação de um caso do catálogo, para usar com `test(...caso("id"), ...)`.
+ * O teste é declarado no próprio arquivo do sistema, e o relatório aponta o local certo.
+ */
+export function caso(id: string): [string, { annotation: { type: "caso"; description: string } }] {
   const c = CASOS.get(id);
   if (!c) throw new Error(`Caso de teste inexistente no catálogo: ${id}`);
-  test(c.descricaoTecnica, { annotation: { type: "caso", description: c.id } }, async ({ request }) => {
-    await corpo(criarApi(request, c));
-  });
+  return [c.descricaoTecnica, { annotation: { type: "caso", description: c.id } }];
 }
+
+/** `test` com a fixture `api`, já ligada ao caso indicado pela anotação. */
+export const test = base.extend<{ api: Api }>({
+  // "fornecer" é o parâmetro que o Playwright chama de "use" (renomeado para não confundir o lint de React).
+  api: async ({ request }, fornecer, testInfo) => {
+    const id = testInfo.annotations.find((a) => a.type === "caso")?.description;
+    const c = id ? CASOS.get(id) : undefined;
+    if (!c) throw new Error(`Teste sem anotação "caso" válida: ${testInfo.title}`);
+    await fornecer(criarApi(request, c));
+  },
+});

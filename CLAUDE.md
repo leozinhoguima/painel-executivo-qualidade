@@ -39,6 +39,8 @@ Cada tela responde em segundos: o sistema está pronto para ir ao ar? A qualidad
 - GitHub: https://github.com/leozinhoguima/painel-executivo-qualidade (público). E-mail dos commits: o anônimo do GitHub (configurado no repositório local).
 - `.github/workflows/qualidade.yml`: rodada agendada (06:00 e 18:00 em Brasília) + manual; faz commit em `data/execucoes/`. Antes de dar push local, rode `git pull --rebase`, porque o robô adiciona commits.
 - `.github/workflows/ci.yml`: lint, tipos, testes e build a cada push e PR.
+- Vercel: projeto `painel-executivo-qualidade` (time `leonardo-carrera-guimaraes-projects`), ligado ao GitHub; cada push em `main` publica em https://painel-executivo-qualidade.vercel.app.
+- Screenshots do README em `docs/imagens/` (capturadas do site em produção).
 - Disparar manualmente: `gh workflow run qualidade.yml`; acompanhar: `gh run list`.
 
 ## Comandos
@@ -112,5 +114,5 @@ Tokens: fundo #F4F6F9, cartão branco com borda #E2E8F0 e raio 12px, texto #0F17
 | 4 | Visão técnica (`/execucoes` com filtros de período, sistema, funcionalidade e resultado) | Concluída (validada) |
 | 5 | Relatório executivo (`/relatorio`, uma folha A4, imprimir/PDF e copiar texto) | Concluída (validada) |
 | 6 | API fictícia + suíte Playwright (75 casos) + importador + `npm run qualidade` | Concluída (validada) |
-| 7 | GitHub Actions: rodada às 06:00/18:00 + CI; repositório público | Concluída — aguardando validação |
-| 8 | README, repositório público e deploy na Vercel | Pendente |
+| 7 | GitHub Actions: rodada às 06:00/18:00 + CI; repositório público | Concluída (validada) |
+| 8 | Deploy na Vercel (https://painel-executivo-qualidade.vercel.app) + README com screenshots | Concluída — aguardando validação |

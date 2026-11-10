@@ -163,6 +163,7 @@ Cada decisão traz o contexto e o porquê, para que possa ser explicada a um ges
 ### T08. Alertas do `npm audit`
 **Situação (Fase 1):** 7 alertas moderados no `minimatch`, uma dependência indireta do ESLint, que só é usado em desenvolvimento. As dependências de produção têm 0 vulnerabilidades (`npm audit --omit=dev`).
 **Decisão:** não rodar `npm audit fix` agora, porque alteraria versões do conjunto de lint do template sem ganho para a aplicação publicada. Reavaliar na Fase 8.
+**Reavaliação (Fase 8):** os mesmos 7 alertas, todos em `typescript-eslint`/`minimatch` (somente lint). O `npm audit fix` não consegue aplicar a correção sem sair da faixa aceita pelo `eslint-config-next`, e o `--force` arriscaria quebrar o lint do template. Mantido: **produção com 0 vulnerabilidades**, risco restrito à máquina de desenvolvimento e ao CI. Rever quando o `eslint-config-next` atualizar a dependência.
 
 ### T09. Vitest 4.1 para testes unitários e tsx para scripts
 **Decisão:** Vitest 4.1.12 e tsx 4.23.15, ambos só em desenvolvimento.
@@ -236,6 +237,15 @@ Cada decisão traz o contexto e o porquê, para que possa ser explicada a um ges
 ### T23. Repositório público sem e-mail pessoal
 **Decisão (aprovada):** os commits usam o e-mail anônimo do GitHub (`…@users.noreply.github.com`), configurado só neste repositório. O autor dos commits feitos antes da publicação foi reescrito localmente, antes do primeiro push, com as datas preservadas.
 **Por quê:** commits públicos expõem o e-mail do autor a robôs de spam e phishing. O e-mail anônimo mantém as contribuições ligadas ao perfil, sem expor o endereço.
+
+### T24. Publicação na Vercel ligada ao repositório
+**Decisão:** projeto `painel-executivo-qualidade` na Vercel (plano Hobby), ligado ao GitHub. Cada push em `main`, inclusive os commits do robô, gera um novo deploy de produção em https://painel-executivo-qualidade.vercel.app.
+**Por quê:** a rodada agendada vira painel atualizado sem intervenção. Com 2 rodadas por dia, o volume fica muito abaixo do limite de deploys do plano gratuito.
+**Página inexistente:** `/sistemas/xyz` exibe "Página não encontrada" com status 200 e `noindex`. É o comportamento documentado do Next 16 quando a rota tem tela de carregamento (a resposta começa a ser enviada antes da verificação). Buscadores não indexam a página.
+
+### T25. Suíte com fixture do Playwright
+**Decisão:** os testes são declarados como `test(...caso("pix-chave-01"), async ({ api }) => …)` em cada arquivo de sistema. A fixture `api` lê a anotação do caso e entrega o cliente já configurado.
+**Por quê:** na versão anterior, todos os testes apareciam no log como `apoio.ts:85`. Agora cada teste aponta para o arquivo e a linha certos (`pix.spec.ts:6`), o que facilita a leitura dos logs do Actions por quem avalia o projeto.
 
 ### T14. Nomes de arquivo dos mockups
 **Decisão:** renomeados para `visao-diretor.png` e `visao-gerente.png` (sem acentos, espaços ou `@`).
