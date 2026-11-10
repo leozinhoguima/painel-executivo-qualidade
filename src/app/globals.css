@@ -51,6 +51,29 @@
   }
 }
 
+/* Impressão / "Salvar como PDF": uma folha A4, fundo branco, cores de status preservadas. */
+@page {
+  size: A4;
+  margin: 12mm;
+}
+
+@media print {
+  html,
+  body {
+    background: #ffffff !important;
+  }
+
+  * {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  /* Indicador de desenvolvimento do Next.js */
+  nextjs-portal {
+    display: none !important;
+  }
+}
+
 /* Números alinhados em indicadores e tabelas. */
 @utility numeros {
   font-variant-numeric: tabular-nums;

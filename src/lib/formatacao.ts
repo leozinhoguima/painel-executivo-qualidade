@@ -43,6 +43,21 @@ export function formatarPontos(pontos: number): string {
   return texto;
 }
 
+/**
+ * Variação em linguagem simples: "+2,4 pontos vs. semana anterior",
+ * "Estável vs. semana anterior". Nula quando não há base de comparação.
+ */
+export function descreverVariacao(
+  pontos: number | null,
+  comparacao: string,
+): { texto: string; sentido: 1 | -1 | 0 } | null {
+  if (pontos === null) return null;
+  const arredondado = Math.round(pontos * 10) / 10;
+  if (arredondado === 0) return { texto: `Estável ${comparacao}`, sentido: 0 };
+  const unidade = Math.abs(arredondado) === 1 ? "ponto" : "pontos";
+  return { texto: `${formatarPontos(arredondado)} ${unidade} ${comparacao}`, sentido: arredondado > 0 ? 1 : -1 };
+}
+
 export function formatarDecimal(valor: number): string {
   return formatoDecimal.format(valor);
 }

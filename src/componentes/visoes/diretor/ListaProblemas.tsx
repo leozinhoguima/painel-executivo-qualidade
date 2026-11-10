@@ -1,5 +1,6 @@
 import { Cartao } from "@/componentes/ui/Cartao";
-import { ROTULO_SITUACAO, SeloSeveridade } from "@/componentes/ui/Selos";
+import { SeloSeveridade } from "@/componentes/ui/Selos";
+import { ROTULO_SITUACAO } from "@/dominio/rotulos";
 import type { ProblemaPrincipal } from "@/dominio/visoes/diretor";
 import { formatarTempoAberto } from "@/lib/formatacao";
 

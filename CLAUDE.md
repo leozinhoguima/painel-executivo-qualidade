@@ -90,8 +90,8 @@ Tokens: fundo #F4F6F9, cartão branco com borda #E2E8F0 e raio 12px, texto #0F17
 | 1 | Setup: create-next-app, versões, Tailwind v4 via PostCSS, Recharts, Lucide, CLAUDE.md, docs/ | Concluída |
 | 2 | Layout base + modelo de dados + histórico fictício + regras (Vitest) + visão do diretor | Concluída (visual aprovado) |
 | 3 | Visão do gerente (`/sistemas`, `/sistemas/[id]?periodo=7\|30\|90&de=sistemas`) | Concluída (validada) |
-| 4 | Visão técnica (`/execucoes` com filtros de período, sistema, funcionalidade e resultado) | Concluída — aguardando validação |
-| 5 | Relatório executivo (`/relatorio`, impressão e copiar resumo) | Pendente |
+| 4 | Visão técnica (`/execucoes` com filtros de período, sistema, funcionalidade e resultado) | Concluída (validada) |
+| 5 | Relatório executivo (`/relatorio`, uma folha A4, imprimir/PDF e copiar texto) | Concluída — aguardando validação |
 | 6 | API fictícia + suíte de testes + importador do relatório | Pendente |
 | 7 | GitHub Actions agendado | Pendente |
 | 8 | README, repositório público e deploy na Vercel | Pendente |

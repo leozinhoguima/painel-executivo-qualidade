@@ -103,6 +103,16 @@ Cada decisão traz o contexto e o porquê, para que possa ser explicada a um ges
 **Por quê:** é a tela de quem investiga: o que aconteceu por último importa mais. Exibir as duas mensagens lado a lado deixa a camada de tradução visível e auditável.
 **Detalhes:** com o filtro "Somente falhas" ou "Somente sucessos", o resumo mostra só a contagem, porque a taxa seria sempre 0% ou 100%. Uma funcionalidade de outro sistema é ignorada, e uma página além do fim mostra a última.
 
+### D22. Relatório semanal: os mesmos números, em uma folha
+**Decisão:** `/relatorio` reaproveita a mesma função da visão executiva (`montarVisaoDiretor`) e acrescenta só o volume da semana. Conteúdo: resumo, 4 indicadores, prontidão por sistema (com área e defeitos), tendência de 6 semanas em barras, os 3 principais problemas e um rodapé "Como ler" com a regra do semáforo e o aviso de dados fictícios.
+**Por quê:** um teste garante que relatório e painel nunca divergem. A tendência é desenhada em barras simples (HTML), porque imprime com nitidez em qualquer impressora, e o gráfico interativo não faz sentido no papel. Tons claros no lugar do bloco azul-marinho evitam gastar tinta.
+**Verificação:** o PDF gerado pelo navegador (Edge, A4, margens de 12 mm) foi conferido com 1 página.
+
+### D23. "Copiar resumo" copia o relatório inteiro em texto simples
+**Decisão:** o botão copia título, resumo, indicadores, prontidão, problemas e a base de cálculo, em texto sem formatação (marcadores "•" e listas numeradas), para colar em e-mail, Teams ou WhatsApp. A tela mostra uma prévia ("Ver o texto que será copiado").
+**Por quê:** só o parágrafo do resumo, sem números, não basta para quem vai repassar. O texto é gerado por uma função pura e testada, com os mesmos rótulos do painel.
+**O botão "Baixar relatório (PDF)"** do cabeçalho abre esta página; o PDF é salvo pelo "Imprimir ou salvar em PDF". Não abrimos a janela de impressão automaticamente ao entrar, para não surpreender quem só quer ler.
+
 ### D21. Do defeito à mensagem técnica em um clique
 **Decisão:** na tabela de defeitos da visão do gerente, a funcionalidade é um link para as falhas dela na visão técnica, no mesmo período.
 **Por quê:** liga os três níveis (diretor → gerente → técnico). O gestor vê o problema em linguagem de negócio e, se precisar, o time técnico chega à mensagem original sem procurar.
@@ -170,6 +180,10 @@ Cada decisão traz o contexto e o porquê, para que possa ser explicada a um ges
 ### T16. Filtros como formulário GET e paginação no servidor
 **Decisão:** os filtros da visão técnica são um `<form method="get">` com `<select>` nativos e botão "Aplicar filtros". A filtragem e a paginação acontecem no servidor; o navegador recebe só as 50 linhas da página.
 **Por quê:** 90 dias somam cerca de 13.500 execuções, e enviar tudo ao navegador deixaria a página pesada. O formulário nativo funciona sem JavaScript, é acessível por teclado e leitor de tela, e o recorte fica na URL. Valores inválidos na URL voltam ao padrão, sem erro.
+
+### T17. Impressão com CSS e rótulos no domínio
+**Decisão:** a impressão usa `@page { size: A4; margin: 12mm }` e as variantes `print:` do Tailwind (esconde barra lateral, botões e prévia; compacta espaçamentos). `print-color-adjust: exact` preserva as cores dos selos. A cópia usa `navigator.clipboard`, com alternativa para navegadores sem essa API.
+**Organização:** os rótulos de negócio ("Risco", "Crítica", "Aguardando decisão") foram movidos para `src/dominio/rotulos.ts`, e o texto de variação ("+2,4 pontos vs. …") virou uma função única (`descreverVariacao`), usada pelo painel, pelo gerente e pelo relatório. Assim, a camada de domínio não depende de componentes visuais.
 
 ### T14. Nomes de arquivo dos mockups
 **Decisão:** renomeados para `visao-diretor.png` e `visao-gerente.png` (sem acentos, espaços ou `@`).

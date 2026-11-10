@@ -40,8 +40,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           Pular para o conteúdo
         </a>
         <Sidebar ultimaExecucao={ultimaExecucao()} />
-        <main id="conteudo" className="min-w-0 flex-1 px-4 py-6 sm:px-8 lg:py-8">
-          <div className="mx-auto flex w-full max-w-[1180px] flex-col gap-6">{children}</div>
+        <main id="conteudo" className="min-w-0 flex-1 px-4 py-6 sm:px-8 lg:py-8 print:p-0">
+          <div className="mx-auto flex w-full max-w-[1180px] flex-col gap-6 print:max-w-none">{children}</div>
         </main>
       </body>
     </html>

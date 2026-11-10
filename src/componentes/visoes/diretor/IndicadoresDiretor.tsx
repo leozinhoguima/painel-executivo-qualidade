@@ -1,26 +1,11 @@
-import { ArrowDown, ArrowUp, Check, CircleX, Clock, Minus, TriangleAlert } from "lucide-react";
+import { Check, CircleX, Clock, TriangleAlert } from "lucide-react";
 import { CartaoIndicador } from "@/componentes/ui/CartaoIndicador";
+import { contextoVariacao } from "@/componentes/ui/contextoVariacao";
 import type { VisaoDiretor } from "@/dominio/visoes/diretor";
-import {
-  formatarDecimal,
-  formatarInteiro,
-  formatarPercentual,
-  formatarPontos,
-  formatarTempoAberto,
-} from "@/lib/formatacao";
+import { formatarDecimal, formatarInteiro, formatarPercentual, formatarTempoAberto } from "@/lib/formatacao";
 
 export function IndicadoresDiretor({ indicadores: i }: { indicadores: VisaoDiretor["indicadores"] }) {
-  const variacao = i.variacaoPontos;
-  const contextoVariacao =
-    variacao === null
-      ? { texto: "Sem semana anterior para comparar", tom: "neutro" as const, Icone: Minus }
-      : Math.round(variacao * 10) === 0
-        ? { texto: "Estável vs. semana anterior", tom: "neutro" as const, Icone: Minus }
-        : {
-            texto: `${formatarPontos(variacao)} ${Math.abs(Math.round(variacao * 10) / 10) === 1 ? "ponto" : "pontos"} vs. semana anterior`,
-            tom: variacao > 0 ? ("positivo" as const) : ("negativo" as const),
-            Icone: variacao > 0 ? ArrowUp : ArrowDown,
-          };
+  const variacao = contextoVariacao(i.variacaoPontos, "vs. semana anterior", "Sem semana anterior para comparar");
 
   const partesProntos = [
     i.emAtencao > 0 ? `${i.emAtencao} em atenção` : null,
@@ -34,7 +19,7 @@ export function IndicadoresDiretor({ indicadores: i }: { indicadores: VisaoDiret
       <CartaoIndicador
         rotulo="Testes com sucesso"
         valor={formatarPercentual(i.taxaSemana)}
-        contexto={contextoVariacao}
+        contexto={variacao}
       />
       <CartaoIndicador
         rotulo="Sistemas prontos"

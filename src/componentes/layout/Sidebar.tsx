@@ -10,7 +10,7 @@ interface SidebarProps {
 /** Barra lateral azul-marinho; em telas pequenas, empilha acima do conteúdo. */
 export function Sidebar({ ultimaExecucao }: SidebarProps) {
   return (
-    <aside className="flex shrink-0 flex-col gap-4 bg-marinho px-4 py-4 text-white lg:sticky lg:top-0 lg:h-dvh lg:w-[232px] lg:gap-8 lg:py-6">
+    <aside className="flex shrink-0 flex-col gap-4 bg-marinho print:hidden px-4 py-4 text-white lg:sticky lg:top-0 lg:h-dvh lg:w-[232px] lg:gap-8 lg:py-6">
       <div className="flex items-center gap-3 px-2">
         <span className="flex size-9 items-center justify-center rounded-lg bg-marca">
           <ShieldCheck aria-hidden="true" className="size-5" strokeWidth={2} />

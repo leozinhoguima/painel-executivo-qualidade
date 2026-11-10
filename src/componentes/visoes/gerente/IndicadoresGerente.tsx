@@ -1,23 +1,16 @@
-import { ArrowDown, ArrowUp, Check, Clock, Minus, TriangleAlert } from "lucide-react";
+import { Check, Clock, TriangleAlert } from "lucide-react";
 import { CartaoIndicador } from "@/componentes/ui/CartaoIndicador";
+import { contextoVariacao } from "@/componentes/ui/contextoVariacao";
 import type { VisaoGerente } from "@/dominio/visoes/gerente";
-import { formatarDecimal, formatarInteiro, formatarPercentual, formatarPontos, pluralizar } from "@/lib/formatacao";
+import { formatarDecimal, formatarInteiro, formatarPercentual, pluralizar } from "@/lib/formatacao";
 
 export function IndicadoresGerente({ visao }: { visao: VisaoGerente }) {
   const i = visao.indicadores;
-  const comparacao = `vs. ${visao.periodo} dias anteriores`;
-
-  const v = i.variacaoPontos;
-  const contextoVariacao =
-    v === null
-      ? { texto: "Sem período anterior para comparar", tom: "neutro" as const, Icone: Minus }
-      : Math.round(v * 10) === 0
-        ? { texto: `Estável ${comparacao}`, tom: "neutro" as const, Icone: Minus }
-        : {
-            texto: `${formatarPontos(v)} ${Math.abs(Math.round(v * 10) / 10) === 1 ? "ponto" : "pontos"} ${comparacao}`,
-            tom: v > 0 ? ("positivo" as const) : ("negativo" as const),
-            Icone: v > 0 ? ArrowUp : ArrowDown,
-          };
+  const variacao = contextoVariacao(
+    i.variacaoPontos,
+    `vs. ${visao.periodo} dias anteriores`,
+    "Sem período anterior para comparar",
+  );
 
   const s = i.porSeveridade;
   const detalheDefeitos = [
@@ -31,7 +24,7 @@ export function IndicadoresGerente({ visao }: { visao: VisaoGerente }) {
 
   return (
     <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-      <CartaoIndicador rotulo="Testes com sucesso" valor={formatarPercentual(i.taxa)} contexto={contextoVariacao} />
+      <CartaoIndicador rotulo="Testes com sucesso" valor={formatarPercentual(i.taxa)} contexto={variacao} />
       <CartaoIndicador
         rotulo="Testes executados"
         valor={formatarInteiro(i.execucoes)}
