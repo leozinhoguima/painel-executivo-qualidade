@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+/* Tokens visuais completos entram na Fase 2 (layout base). */
+@theme inline {
+  --font-sans: var(--font-plex-sans);
+}
+
+body {
+  background: #f4f6f9;
+  color: #0f172a;
+}
