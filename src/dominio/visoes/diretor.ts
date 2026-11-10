@@ -1,4 +1,5 @@
-import { DIA_MS, semanasFechadas, type Semana } from "@/lib/datas";
+import { semanasFechadas, type Semana } from "@/lib/datas";
+import { janelaMovel } from "../regras/periodo";
 import { classificarProntidao, compararPiorPrimeiro } from "../regras/prontidao";
 import {
   compararPorPrioridade,
@@ -104,11 +105,8 @@ export function montarVisaoDiretor(base: BaseQualidade): VisaoDiretor | null {
   const variacaoPontos = variacaoEmPontos(taxaSemana, calcularTaxa(execAnterior).valor);
 
   const criticas = abertos.filter((d) => d.severidade === "critica");
-  const correcao = tempoMedioCorrecao(
-    defeitos,
-    referencia - JANELA_CORRECAO_DIAS * DIA_MS,
-    referencia + 1,
-  );
+  const janelaCorrecao = janelaMovel(referencia, JANELA_CORRECAO_DIAS);
+  const correcao = tempoMedioCorrecao(defeitos, janelaCorrecao.inicio, janelaCorrecao.fim);
 
   const resumo = gerarResumoSemana({
     sistemas: prontidao.map((linha) => {

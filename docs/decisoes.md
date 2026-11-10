@@ -79,6 +79,20 @@ Cada decisão traz o contexto e o porquê, para que possa ser explicada a um ges
 **Decisão:** "09/11/2026, 06:00 · 75 testes" em vez de "Hoje, 06:00".
 **Por quê:** as páginas são geradas no build. Um "Hoje" calculado naquele momento ficaria incorreto no dia seguinte.
 
+### D17. Visão do gerente: período móvel e defeitos sempre atuais
+**Decisão:**
+- 7, 30 ou 90 dias são uma **janela móvel** que termina na última execução (padrão: 30 dias, como no mockup). Com rodadas a cada 12 horas, 7 dias = 14 execuções automáticas.
+- Taxa, testes executados, sucesso por funcionalidade e tempo de correção usam o período escolhido. A variação compara com o período anterior de mesmo tamanho ("vs. 30 dias anteriores").
+- **Defeitos em aberto não dependem do período:** são sempre os da data da última execução, porque um problema aberto continua aberto.
+- O selo de status ao lado do nome do sistema usa a mesma regra do semáforo, aplicada ao período escolhido.
+
+**Por quê:** o diretor olha a semana fechada (comparável semana a semana); o gerente precisa investigar períodos diferentes. A tela sempre mostra o período exato ("Últimos 30 dias (10/10 a 09/11/2026)") para que os números não pareçam divergir da visão executiva. Defeitos críticos ou altos determinam o status em qualquer período, então o semáforo das duas visões coincide nos casos que importam.
+
+### D18. Status por funcionalidade considera defeitos em aberto
+**Contexto:** "Envio por QR Code" tem 98,9% de sucesso em 30 dias, mas aparece em Atenção por causa de um defeito de severidade alta aberto.
+**Decisão:** manter a mesma regra do semáforo também por funcionalidade e dizer isso no cabeçalho do cartão ("o status também considera os defeitos em aberto").
+**Por quê:** uma taxa alta num período longo pode esconder um problema que começou há 3 dias. A regra única evita exceções difíceis de explicar.
+
 ---
 
 ## Técnicas
@@ -133,6 +147,11 @@ Cada decisão traz o contexto e o porquê, para que possa ser explicada a um ges
 
 ### T13. Gráfico com `responsive` do Recharts 3
 **Decisão:** usar a prop `responsive` do gráfico, em vez do `ResponsiveContainer`, que é o caminho recomendado no guia de dimensionamento do Recharts 3. O gráfico tem tooltip por semana, descrição textual e tabela equivalente para leitores de tela.
+
+### T15. Período do gerente na URL, com renderização sob demanda
+**Decisão:** o seletor de período é um conjunto de links (`?periodo=7|30|90`), e a página lê o parâmetro no servidor. Por isso a rota `/sistemas/[sistemaId]` é renderizada sob demanda; as demais continuam estáticas.
+**Alternativa:** pré-calcular os 3 períodos e alternar no navegador. Mantém a página estática, mas envia três vezes mais dados e duplica a lógica de estado.
+**Por quê:** o link compartilhado abre exatamente o mesmo recorte, funciona sem JavaScript, e o custo é baixo (dados em cache no servidor, cálculo de milissegundos). Um valor inválido na URL volta para 30 dias, sem erro.
 
 ### T14. Nomes de arquivo dos mockups
 **Decisão:** renomeados para `visao-diretor.png` e `visao-gerente.png` (sem acentos, espaços ou `@`).

@@ -74,7 +74,7 @@ Ao mudar `scripts/historico/cenarios.ts` ou `data/catalogo.json`, rode `npm run 
 - Dados em JSON versionados em `data/`. Defeitos **derivados** das execuções: um defeito é funcionalidade + descrição traduzida; abre com 2 falhas a menos de 4 dias uma da outra; resolve após 4 dias sem falhas e 2 sucessos. `acompanhamento.json` acrescenta situação, responsável e severidade.
 - Semáforo: Risco = taxa < 85% ou defeito crítico aberto; Atenção = taxa < 95% ou defeito alto aberto; Pronto = demais. A taxa é comparada arredondada como exibida.
 - Taxa de sucesso = execuções com sucesso ÷ execuções no período. Meta única: 95%. Meta de correção: até 3 dias (janela de 30 dias).
-- Data de referência = última rodada; o diretor vê a última semana fechada (seg–dom) e tendência de 6 semanas; o gerente vê janela móvel de 7/30/90 dias.
+- Data de referência = última rodada; o diretor vê a última semana fechada (seg–dom) e tendência de 6 semanas; o gerente vê janela móvel de 7/30/90 dias (padrão 30), comparada com o período anterior. Defeitos em aberto são sempre os da data de referência.
 - Histórico fictício: semanas 33–45/2026, rodadas às 06:00 e 18:00, última em 09/11/2026 06:00, 75 casos de teste, seed fixa, mesmo formato dos dados importados.
 - API fictícia em servidor Node separado (`demo-api/`).
 
@@ -88,8 +88,8 @@ Tokens: fundo #F4F6F9, cartão branco com borda #E2E8F0 e raio 12px, texto #0F17
 | Fase | Entrega | Status |
 |---|---|---|
 | 1 | Setup: create-next-app, versões, Tailwind v4 via PostCSS, Recharts, Lucide, CLAUDE.md, docs/ | Concluída |
-| 2 | Layout base + modelo de dados + histórico fictício + regras (Vitest) + visão do diretor | Concluída — aguardando aprovação visual |
-| 3 | Visão do gerente (`/sistemas`, `/sistemas/[id]`) | Pendente |
+| 2 | Layout base + modelo de dados + histórico fictício + regras (Vitest) + visão do diretor | Concluída (visual aprovado) |
+| 3 | Visão do gerente (`/sistemas`, `/sistemas/[id]?periodo=7\|30\|90`) | Concluída — aguardando validação |
 | 4 | Visão técnica (`/execucoes`) | Pendente |
 | 5 | Relatório executivo (`/relatorio`, impressão e copiar resumo) | Pendente |
 | 6 | API fictícia + suíte de testes + importador do relatório | Pendente |

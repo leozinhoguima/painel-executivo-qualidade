@@ -81,6 +81,17 @@ export function formatarIntervaloSemana(semana: Pick<Semana, "inicio">): string 
   return `${dois(a.dia)} a ${dois(b.dia)} de ${MESES[b.mes - 1]} de ${b.ano}`;
 }
 
+/**
+ * Intervalo [inicio, fim) em datas curtas: "11/10 a 09/11/2026"
+ * (com o ano nas duas pontas quando a janela cruza o ano).
+ */
+export function formatarJanela(janela: { inicio: Instante; fim: Instante }): string {
+  const a = paraDataLocal(janela.inicio);
+  const b = paraDataLocal(janela.fim - 1);
+  const inicio = a.ano === b.ano ? `${dois(a.dia)}/${dois(a.mes)}` : `${dois(a.dia)}/${dois(a.mes)}/${a.ano}`;
+  return `${inicio} a ${dois(b.dia)}/${dois(b.mes)}/${b.ano}`;
+}
+
 /** "Semana 45 · 02 a 08 de novembro de 2026" */
 export function formatarSemana(semana: Semana): string {
   return `Semana ${semana.numero} · ${formatarIntervaloSemana(semana)}`;

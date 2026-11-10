@@ -1,4 +1,4 @@
-import { Download } from "lucide-react";
+import { ChevronLeft, Download } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { SeloDemonstracao } from "@/componentes/ui/Selos";
@@ -11,18 +11,38 @@ interface CabecalhoProps {
   subtitulo?: ReactNode;
   /** Exibe o botão de relatório e a usuária (visão executiva). */
   comAcoes?: boolean;
+  /** Link de retorno exibido acima do título (ex.: "‹ Visão executiva"). */
+  voltar?: { href: string; rotulo: string };
+  /** Elemento ao lado do título (ex.: selo de status do sistema). */
+  aoLadoDoTitulo?: ReactNode;
+  /** Controles à direita (ex.: seletor de período), no lugar das ações padrão. */
+  controles?: ReactNode;
 }
 
-export function Cabecalho({ titulo, subtitulo, comAcoes = true }: CabecalhoProps) {
+export function Cabecalho({ titulo, subtitulo, comAcoes = true, voltar, aoLadoDoTitulo, controles }: CabecalhoProps) {
   return (
-    <header className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
+    <header className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
       <div className="flex flex-col gap-2">
+        {voltar && (
+          <Link
+            href={voltar.href}
+            className="-ml-1 inline-flex min-h-11 w-fit items-center gap-1 px-1 text-[14px] font-medium text-marca hover:underline md:min-h-0"
+          >
+            <ChevronLeft aria-hidden="true" className="size-4" />
+            {voltar.rotulo}
+          </Link>
+        )}
         <SeloDemonstracao />
-        <h1 className="text-[26px] leading-tight font-semibold tracking-tight sm:text-[28px]">{titulo}</h1>
+        <div className="flex flex-wrap items-center gap-3">
+          <h1 className="text-[26px] leading-tight font-semibold tracking-tight sm:text-[28px]">{titulo}</h1>
+          {aoLadoDoTitulo}
+        </div>
         {subtitulo && <p className="numeros text-[14px] text-tinta-suave">{subtitulo}</p>}
       </div>
 
-      {comAcoes && (
+      {controles}
+
+      {comAcoes && !controles && (
         <div className="flex flex-wrap items-center gap-4">
           <Link
             href="/relatorio"
