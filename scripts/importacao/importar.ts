@@ -1,4 +1,4 @@
-import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { appendFileSync, existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { validarArquivoExecucoes, validarCatalogo } from "@/dados/validacao";
 import { converterRelatorioPlaywright, type ResultadoImportacao } from "@/importacao/playwright";
@@ -39,4 +39,22 @@ export function imprimirResumo(r: ResultadoImportacao & { destino: string }, rai
   console.log(`\nRodada ${rodada.id} importada → ${path.relative(raiz, r.destino)}`);
   console.log(`  ${r.resumo.total} testes · ${r.resumo.sucessos} sucessos · ${r.resumo.falhas} falhas`);
   for (const aviso of r.avisos) console.log(`  aviso: ${aviso}`);
+
+  // No GitHub Actions, o resumo também aparece na página da execução.
+  const resumoActions = process.env.GITHUB_STEP_SUMMARY;
+  if (resumoActions) {
+    const falhas = rodada.execucoes.filter((e) => e.resultado === "falha");
+    const linhas = [
+      `## Rodada ${rodada.id}`,
+      "",
+      `**${r.resumo.total} testes** · ${r.resumo.sucessos} sucessos · ${r.resumo.falhas} falhas · dados fictícios (API de demonstração)`,
+      "",
+      ...(falhas.length
+        ? ["| Caso | Mensagem técnica |", "|---|---|", ...falhas.map((f) => `| \`${f.casoId}\` | ${f.erroTecnico ?? ""} |`)]
+        : ["Nenhuma falha nesta rodada."]),
+      ...(r.avisos.length ? ["", "**Avisos**", ...r.avisos.map((a) => `- ${a}`)] : []),
+      "",
+    ];
+    appendFileSync(resumoActions, linhas.join("\n"));
+  }
 }

@@ -1,0 +1,36 @@
+# Verificação de qualidade do próprio código do painel a cada push e pull request.
+name: CI
+
+on:
+  push:
+    branches: [main]
+    # Commits só de dados (rodadas automáticas) não alteram o código.
+    paths-ignore:
+      - "data/execucoes/**"
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verificar:
+    name: Lint, tipos, testes unitários e build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build

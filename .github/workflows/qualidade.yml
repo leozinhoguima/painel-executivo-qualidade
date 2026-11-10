@@ -1,0 +1,66 @@
+# Automação de qualidade: roda a suíte Playwright contra a API FICTÍCIA,
+# importa o relatório e grava a nova rodada em data/execucoes/.
+# O commit dispara o novo deploy do painel (Vercel), que exibe os dados atualizados.
+name: Rodada de qualidade
+
+on:
+  schedule:
+    # 06:00 e 18:00 em Brasília (UTC−3) = 09:00 e 21:00 UTC
+    - cron: "0 9,21 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# Uma rodada por vez; uma rodada agendada nunca cancela outra em andamento.
+concurrency:
+  group: rodada-de-qualidade
+  cancel-in-progress: false
+
+jobs:
+  rodada:
+    name: Executar testes e atualizar o painel
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Obter o código
+        uses: actions/checkout@v7
+
+      - name: Preparar Node.js 24
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Rodar a suíte e importar o relatório
+        run: npm run qualidade
+
+      - name: Guardar o relatório do Playwright
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: relatorio-playwright
+          path: test-results/relatorio-playwright.json
+          retention-days: 14
+          if-no-files-found: warn
+
+      - name: Gravar a nova rodada no repositório
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/execucoes/
+          if git diff --cached --quiet; then
+            echo "Nenhuma rodada nova para gravar."
+            exit 0
+          fi
+          git commit -m "chore(dados): rodada automática de qualidade"
+          # Se houve outro push no meio tempo, reaplica por cima e tenta de novo.
+          for tentativa in 1 2 3; do
+            git pull --rebase origin main && git push origin HEAD:main && exit 0
+            sleep 5
+          done
+          echo "Não foi possível enviar a rodada após 3 tentativas." >&2
+          exit 1
