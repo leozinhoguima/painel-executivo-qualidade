@@ -1,0 +1,38 @@
+{
+  "descricao": "Acompanhamento FICTÍCIO dos defeitos: situação, responsável e, quando justificado, outra severidade. A abertura e a resolução dos defeitos são derivadas automaticamente das execuções; este arquivo só acrescenta contexto de gestão.",
+  "itens": [
+    {
+      "codigoDefeito": "AC-104",
+      "situacao": "aguardando-decisao",
+      "responsavel": "Gerência de Onboarding Digital",
+      "observacao": "O fornecedor de validação propôs contingência com análise manual; requer aprovação da diretoria."
+    },
+    {
+      "codigoDefeito": "PX-103",
+      "situacao": "em-correcao",
+      "responsavel": "Gerência de Pagamentos Instantâneos",
+      "severidade": "baixa",
+      "observacao": "O Pix é concluído normalmente; apenas o texto exibido ao cliente está incorreto."
+    },
+    {
+      "codigoDefeito": "PX-104",
+      "situacao": "em-correcao",
+      "responsavel": "Gerência de Pagamentos Instantâneos"
+    },
+    {
+      "codigoDefeito": "PX-105",
+      "situacao": "em-correcao",
+      "responsavel": "Gerência de Pagamentos Instantâneos"
+    },
+    {
+      "codigoDefeito": "PX-106",
+      "situacao": "em-analise",
+      "responsavel": "Gerência de Pagamentos Instantâneos"
+    },
+    {
+      "codigoDefeito": "CT-105",
+      "situacao": "em-analise",
+      "responsavel": "Gerência de Meios de Pagamento"
+    }
+  ]
+}

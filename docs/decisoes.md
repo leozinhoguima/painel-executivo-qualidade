@@ -22,7 +22,8 @@ Cada decisão traz o contexto e o porquê, para que possa ser explicada a um ges
 - **Atenção:** taxa abaixo de 95% **ou** algum defeito de severidade alta em aberto.
 - **Pronto:** os demais casos (95% ou mais e nenhum defeito crítico ou alto em aberto).
 
-**Por quê:** combina volume (taxa) e gravidade (defeito). Um sistema com 99% de sucesso mas com o Pix por QR Code quebrado não pode estar "Pronto". A regra aparece escrita na tela para dar transparência.
+**Por quê:** combina volume (taxa) e gravidade (defeito). Um sistema com 99% de sucesso mas com o Pix por QR Code quebrado não pode estar "Pronto". A regra completa aparece escrita na tela. O texto do mockup ("nenhuma falha crítica") foi completado com "ou alta" para refletir a regra real.
+**Detalhe:** a taxa é comparada arredondada a uma casa decimal, como aparece na tela (ver T12).
 
 ### D05. Taxa de sucesso = execuções com sucesso ÷ execuções no período
 **Alternativa descartada:** % de casos cuja última execução passou.
@@ -35,19 +36,48 @@ Cada decisão traz o contexto e o porquê, para que possa ser explicada a um ges
 **Por quê:** o relatório executivo compara semanas completas. Não depender do relógio do servidor torna a demonstração reproduzível.
 
 ### D08. Defeitos derivados das execuções, com acompanhamento opcional (modelo híbrido)
-**Decisão:** um caso de teste que falha em 2 rodadas seguidas abre um defeito, e 2 sucessos seguidos o resolvem. O arquivo `acompanhamento.json` acrescenta situação (em análise, em correção ou aguardando decisão), responsável e, se preciso, outra severidade.
+**Decisão:** um defeito é um **problema de negócio**, ou seja, a funcionalidade mais a descrição traduzida do erro, e não um teste isolado. Se três testes da validação de documentos falham pelo mesmo motivo, é um único defeito.
+- **Abre** quando o mesmo problema falha 2 vezes com menos de 4 dias entre uma falha e a seguinte. A data de abertura é a da primeira falha.
+- **Resolve** depois de 4 dias sem nova falha e com pelo menos 2 sucessos dos testes afetados. A data de resolução é a do primeiro sucesso depois da última falha.
+- O arquivo `acompanhamento.json` acrescenta situação (em análise, em correção ou aguardando decisão), responsável e, quando justificado, outra severidade.
+
 **Alternativas:** (a) somente derivados, sem situação rica; (b) somente cadastro manual, que é dado fora da automação.
-**Por quê:** mantém a automação real, porque abertura e resolução vêm dos testes, e ainda responde "existe algo crítico parado que exige decisão?". Exigir 2 ocorrências evita que uma instabilidade pontual abra ou feche defeitos.
+**Por quê:** mantém a automação real (abertura e resolução vêm dos testes) e ainda responde "existe algo crítico parado que exige decisão?".
+**Ajuste feito na Fase 2:** a regra planejada (2 falhas seguidas abrem, 2 sucessos seguidos resolvem) fazia um problema intermitente abrir e fechar várias vezes na simulação, gerando códigos novos para o mesmo problema. A janela de 4 dias elimina esse vai e vem. Agrupar por problema, e não por teste, evitou defeitos duplicados.
+**Códigos:** prefixo do sistema + número sequencial pela ordem de confirmação (PX-101, AC-104), como no mockup. A ordem de confirmação nunca muda quando o histórico cresce, então os códigos são estáveis.
 
 ### D09. Severidade herda a criticidade da funcionalidade
 **Por quê:** a criticidade é uma decisão de negócio tomada uma única vez, no catálogo. O acompanhamento pode sobrescrevê-la caso a caso.
 
 ### D10. Tempo médio de correção
-**Decisão:** média em dias corridos, da abertura à resolução, dos defeitos **resolvidos** no período. Na visão do diretor a janela é de 30 dias, indicada no cartão.
+**Decisão:** média em dias corridos, da abertura à resolução, dos defeitos **resolvidos** nos últimos 30 dias, com **meta de até 3 dias** (vinda do mockup). A janela aparece no próprio cartão.
 **Por quê:** uma semana costuma ter poucos defeitos resolvidos e a média ficaria instável.
 
-### D11. Histórico fictício de 13 semanas, com seed fixa
-**Por quê:** cobre o filtro de 90 dias e a tendência de 12 semanas. A seed fixa garante que todos vejam o mesmo painel. O formato é idêntico ao dos dados importados, então as telas não distinguem a origem.
+### D11. Histórico fictício: 13 semanas, seed fixa
+**Decisão:** semanas 33 a 45 de 2026, com rodadas automáticas às 06:00 e às 18:00. A última é em 09/11/2026 às 06:00, o que torna a semana 45 (02 a 08/11) a última semana fechada. São 75 casos de teste (25 funcionalidades × 3), num total de 183 rodadas e 13.725 execuções, em cerca de 1 MB.
+**Como:** um roteiro de incidentes (`scripts/historico/cenarios.ts`) define quais testes falham, quando e com que probabilidade. Fora deles há um ruído mínimo de 0,1%. Um teste automatizado garante que o arquivo versionado é exatamente o que o gerador produz.
+**Por quê:** cobre o filtro de 90 dias e a tendência. A seed fixa garante que todos vejam o mesmo painel. O formato é idêntico ao dos dados importados, então as telas não distinguem a origem.
+
+### D12. Tendência de 6 semanas na visão executiva
+**Decisão:** seguir o mockup (6 semanas). O plano previa 12.
+**Por quê:** para um diretor, 6 semanas mostram a direção recente sem poluir o gráfico. Históricos mais longos ficam para as visões de gerente e técnica.
+
+### D13. Os números vêm dos dados, não do mockup
+**Contexto:** no mockup a taxa geral sobe para 94,2%. Nos dados gerados ela cai 4,1 pontos nesta semana (de 98,2% para 94,1%), porque a Abertura de Conta e o Pix pioraram.
+**Decisão:** manter. O mockup define o visual; os números são sempre calculados. A queda reforça a história da semana ("um sistema entrou em risco").
+
+### D14. Impacto dos problemas intermitentes em frequência
+**Decisão:** se, desde a abertura do defeito (até 7 dias), menos da metade das execuções dos testes afetados falhou, a linha de impacto vira "cerca de 1 em cada N tentativas falha nos testes". Nos demais casos, mostra a consequência de negócio do catálogo.
+**Por quê:** para um problema intermitente, a frequência diz mais ao gestor do que a consequência genérica. É o formato do mockup.
+
+### D15. Rebaixamento de severidade justificado
+**Caso:** PX-103, "Mensagem de erro genérica para o cliente", acontece na funcionalidade crítica "Envio por chave", mas o Pix é concluído normalmente.
+**Decisão:** o acompanhamento rebaixa a severidade para baixa, registrando o motivo.
+**Por quê:** a severidade herdada é um bom padrão, mas a decisão final é de negócio. Sem isso, um problema de texto deixaria o Pix em "Risco".
+
+### D16. Data absoluta da última execução na barra lateral
+**Decisão:** "09/11/2026, 06:00 · 75 testes" em vez de "Hoje, 06:00".
+**Por quê:** as páginas são geradas no build. Um "Hoje" calculado naquele momento ficaria incorreto no dia seguinte.
 
 ---
 
@@ -85,3 +115,25 @@ Cada decisão traz o contexto e o porquê, para que possa ser explicada a um ges
 ### T08. Alertas do `npm audit`
 **Situação (Fase 1):** 7 alertas moderados no `minimatch`, uma dependência indireta do ESLint, que só é usado em desenvolvimento. As dependências de produção têm 0 vulnerabilidades (`npm audit --omit=dev`).
 **Decisão:** não rodar `npm audit fix` agora, porque alteraria versões do conjunto de lint do template sem ganho para a aplicação publicada. Reavaliar na Fase 8.
+
+### T09. Vitest 4.1 para testes unitários e tsx para scripts
+**Decisão:** Vitest 4.1.12 e tsx 4.23.15, ambos só em desenvolvimento.
+**Por que não o Vitest 5.1.0 (mais recente):** saiu em 02/11/2026 e exige `@types/node` 22 ou superior, o que obrigaria a atualizar o `@types/node` 20 do template. A linha 4.1 é madura e compatível com o que já está instalado.
+**Escopo:** só testes unitários das regras (funções puras). O framework da suíte de testes da API fictícia continua para a Fase 6.
+
+### T10. Fuso fixo −03:00 nos cálculos
+**Por quê:** o Brasil não tem horário de verão desde 2019. Um deslocamento fixo mantém as funções puras e o resultado igual em qualquer máquina, inclusive no CI e na Vercel (que rodam em UTC).
+
+### T11. Dados lidos no servidor; páginas estáticas
+**Decisão:** o repositório (`src/dados/repositorio.ts`) lê e valida os JSON no servidor. As páginas recebem só os números prontos e são geradas no build. O `outputFileTracingIncludes` garante que a pasta `data/` vá para o deploy.
+**Por quê:** nenhum dado bruto vai para o navegador, a página fica rápida e a validação falha de forma clara (`ErroDadosInvalidos` indica arquivo e campo).
+
+### T12. Classificação com o valor exibido
+**Por quê:** sem isso, um sistema com 94,96% apareceria como "95,0%" e, ainda assim, em Atenção. O número mostrado e o status nunca podem se contradizer.
+
+### T13. Gráfico com `responsive` do Recharts 3
+**Decisão:** usar a prop `responsive` do gráfico, em vez do `ResponsiveContainer`, que é o caminho recomendado no guia de dimensionamento do Recharts 3. O gráfico tem tooltip por semana, descrição textual e tabela equivalente para leitores de tela.
+
+### T14. Nomes de arquivo dos mockups
+**Decisão:** renomeados para `visao-diretor.png` e `visao-gerente.png` (sem acentos, espaços ou `@`).
+**Por quê:** nomes ASCII evitam problemas no Git, em URLs do README e em terminais.

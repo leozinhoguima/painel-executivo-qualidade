@@ -1,11 +1,57 @@
 @import "tailwindcss";
 
-/* Tokens visuais completos entram na Fase 2 (layout base). */
-@theme inline {
-  --font-sans: var(--font-plex-sans);
+/*
+ * Tokens visuais (Tailwind v4: cada --color-* vira utilitário, ex.: bg-fundo, text-tinta).
+ * Referência: docs/referencia/visao-diretor.png e visao-gerente.png.
+ */
+@theme {
+  --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
+
+  /* Superfícies e texto */
+  --color-fundo: #f4f6f9;
+  --color-cartao: #ffffff;
+  --color-borda: #e2e8f0;
+  --color-divisor: #edf1f6;
+  --color-tinta: #0f172a;
+  --color-tinta-suave: #475569;
+
+  /* Marca */
+  --color-marca: #2f5bd3;
+  --color-marca-clara: #eaf0fd;
+  --color-marinho: #0f1b33;
+  --color-marinho-ativo: #1c2b4a;
+  --color-marinho-texto: #b8c2d6;
+
+  /* Status (sempre com ícone e texto) */
+  --color-ok: #15803d;
+  --color-ok-fundo: #e8f5ec;
+  --color-alerta: #b45309;
+  --color-alerta-fundo: #fdf1e3;
+  --color-risco: #b91c1c;
+  --color-risco-fundo: #fdecec;
+  --color-neutro: #334155;
+  --color-neutro-fundo: #f1f5f9;
+
+  --radius-cartao: 12px;
 }
 
-body {
-  background: #f4f6f9;
-  color: #0f172a;
+@layer base {
+  html {
+    background: var(--color-fundo);
+  }
+
+  body {
+    background: var(--color-fundo);
+    color: var(--color-tinta);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-marca);
+    outline-offset: 2px;
+  }
+}
+
+/* Números alinhados em indicadores e tabelas. */
+@utility numeros {
+  font-variant-numeric: tabular-nums;
 }

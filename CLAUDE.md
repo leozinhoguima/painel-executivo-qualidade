@@ -30,32 +30,52 @@ Cada tela responde em segundos: o sistema está pronto para ir ao ar? A qualidad
 | recharts | 3.10.1 |
 | lucide-react | 1.71.0 |
 | eslint | 9.39.5 (faixa `^9` do template) |
+| vitest (dev) | 4.1.12 — testes unitários das regras |
+| tsx (dev) | 4.23.15 — executa scripts TypeScript |
 
-Framework de testes E2E: **ainda não definido** (decisão na Fase 6; preferência: Playwright). Vitest para testes unitários das regras entra na Fase 2.
+Framework da suíte de testes da API fictícia: **ainda não definido** (decisão na Fase 6; preferência: Playwright).
 
 ## Comandos
 
 ```powershell
-npm run dev        # servidor local em http://localhost:3000
+npm run dev              # servidor local em http://localhost:3000
 npm run lint
 npm run typecheck
+npm test                 # testes unitários (Vitest)
 npm run build
+npm run dados:historico  # regenera data/execucoes/historico-ficticio.json (seed fixa)
 ```
+
+## Estrutura
+
+```
+data/                      catálogo, traduções, acompanhamento e execuções (JSON)
+scripts/historico/         roteiro de incidentes + gerador determinístico do histórico
+src/dominio/tipos.ts       modelo de dados
+src/dominio/regras/        funções puras: taxa, prontidão, defeitos, tradução, tendência, resumo
+src/dominio/visoes/        montagem dos números de cada tela (ex.: diretor.ts)
+src/dados/                 leitura e validação dos JSON (somente servidor)
+src/lib/                   datas (fuso −03:00), formatação pt-BR, aleatório com seed
+src/componentes/ui|layout|graficos|visoes/
+src/app/                   rotas (App Router)
+```
+
+Ao mudar `scripts/historico/cenarios.ts` ou `data/catalogo.json`, rode `npm run dados:historico`. Um teste falha se o arquivo versionado estiver desatualizado. Códigos de defeito em `data/acompanhamento.json` dependem do histórico: confira-os depois de regenerar.
 
 ## Ritual de fim de fase
 
-1. `npm run lint`, `npm run typecheck`, testes (a partir da Fase 2) e `npm run build`, sem falhas.
+1. `npm run lint`, `npm run typecheck`, `npm test` e `npm run build`, sem falhas.
 2. Atualizar este arquivo (status do plano) e `docs/decisoes.md`.
 3. Commit em Conventional Commits (mensagens em português).
 4. Resumo curto + como testar. Aguardar OK do usuário.
 
 ## Decisões-chave (detalhes em `docs/decisoes.md`)
 
-- Dados em JSON versionados em `data/`; defeitos **derivados** das execuções (2 falhas seguidas abrem; 2 sucessos seguidos resolvem) + `acompanhamento.json` opcional.
-- Semáforo: Risco = taxa < 85% ou defeito crítico aberto; Atenção = taxa < 95% ou defeito alto aberto; Pronto = demais.
-- Taxa de sucesso = execuções com sucesso ÷ execuções no período. Meta única: 95%.
-- Data de referência = última rodada; o diretor vê a última semana fechada (seg–dom); o gerente vê janela móvel de 7/30/90 dias.
-- Histórico fictício: 13 semanas, seed fixa, mesmo formato dos dados importados, termina em 08/11/2026.
+- Dados em JSON versionados em `data/`. Defeitos **derivados** das execuções: um defeito é funcionalidade + descrição traduzida; abre com 2 falhas a menos de 4 dias uma da outra; resolve após 4 dias sem falhas e 2 sucessos. `acompanhamento.json` acrescenta situação, responsável e severidade.
+- Semáforo: Risco = taxa < 85% ou defeito crítico aberto; Atenção = taxa < 95% ou defeito alto aberto; Pronto = demais. A taxa é comparada arredondada como exibida.
+- Taxa de sucesso = execuções com sucesso ÷ execuções no período. Meta única: 95%. Meta de correção: até 3 dias (janela de 30 dias).
+- Data de referência = última rodada; o diretor vê a última semana fechada (seg–dom) e tendência de 6 semanas; o gerente vê janela móvel de 7/30/90 dias.
+- Histórico fictício: semanas 33–45/2026, rodadas às 06:00 e 18:00, última em 09/11/2026 06:00, 75 casos de teste, seed fixa, mesmo formato dos dados importados.
 - API fictícia em servidor Node separado (`demo-api/`).
 
 ## Referência visual
@@ -68,7 +88,7 @@ Tokens: fundo #F4F6F9, cartão branco com borda #E2E8F0 e raio 12px, texto #0F17
 | Fase | Entrega | Status |
 |---|---|---|
 | 1 | Setup: create-next-app, versões, Tailwind v4 via PostCSS, Recharts, Lucide, CLAUDE.md, docs/ | Concluída |
-| 2 | Layout base + modelo de dados + histórico fictício + regras (Vitest) + visão do diretor | Pendente (aguarda mockups em `docs/referencia/`) |
+| 2 | Layout base + modelo de dados + histórico fictício + regras (Vitest) + visão do diretor | Concluída — aguardando aprovação visual |
 | 3 | Visão do gerente (`/sistemas`, `/sistemas/[id]`) | Pendente |
 | 4 | Visão técnica (`/execucoes`) | Pendente |
 | 5 | Relatório executivo (`/relatorio`, impressão e copiar resumo) | Pendente |

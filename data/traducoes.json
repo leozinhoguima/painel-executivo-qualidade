@@ -1,0 +1,29 @@
+{
+  "descricao": "Tradução de mensagens técnicas de falha para linguagem de negócio. A primeira regra cujo padrão (expressão regular) casar com a mensagem é usada. Sem regra específica, o painel aplica regras genéricas (lentidão, indisponibilidade, recusa).",
+  "regras": [
+    { "padrao": "^POST /pix/transferencias retornou 5\\d\\d", "descricao": "Falha no envio de Pix por chave" },
+    { "padrao": "mensagem de erro .* não corresponde ao texto esperado", "descricao": "Mensagem de erro genérica para o cliente" },
+    { "padrao": "^POST /pix/qrcode/pagamentos retornou 5\\d\\d", "descricao": "Erro no envio de Pix por QR Code" },
+    { "padrao": "valor devolvido", "descricao": "Devolução parcial com valor incorreto" },
+    { "padrao": "campo 'dataHora' ausente .*comprovantes", "descricao": "Comprovante sem o horário da operação" },
+    { "padrao": "^POST /pix/agendamentos retornou 5\\d\\d", "descricao": "Pix agendado não é registrado" },
+
+    { "padrao": "^POST /transferencias/ted retornou 5\\d\\d", "descricao": "Transferências TED não são concluídas" },
+    { "padrao": "^POST /transferencias/agendamentos retornou 5\\d\\d", "descricao": "Falha ao agendar transferências" },
+    { "padrao": "/favorecidos.* retornou 5\\d\\d", "descricao": "Falha no cadastro de favorecidos" },
+
+    { "padrao": "^POST /onboarding/documentos/validacao retornou 5\\d\\d", "descricao": "Falha na validação de documentos do cliente" },
+    { "padrao": "/onboarding/cadastro.* retornou 5\\d\\d", "descricao": "Cadastro de novos clientes indisponível" },
+    { "padrao": "^POST /onboarding/contrato/assinatura retornou 5\\d\\d", "descricao": "Falha na assinatura do contrato de abertura" },
+
+    { "padrao": "GET /cartoes/\\{id\\}/limite", "descricao": "Lentidão na consulta de limite do cartão" },
+    { "padrao": "^GET /cartoes/\\{id\\}/fatura.* retornou 5\\d\\d", "descricao": "Fatura do cartão indisponível" },
+    { "padrao": "^POST /cartoes/\\{id\\}/fatura/pagamento retornou 5\\d\\d", "descricao": "Falha no pagamento da fatura do cartão" },
+    { "padrao": "^POST /cartoes/virtuais retornou 5\\d\\d", "descricao": "Falha na emissão de cartão virtual" },
+
+    { "padrao": "^POST /ib/sessoes retornou 5\\d\\d", "descricao": "Clientes não conseguem acessar o Internet Banking" },
+    { "padrao": "^POST /ib/boletos/pagamentos retornou 5\\d\\d", "descricao": "Falha no pagamento de boletos" },
+    { "padrao": "^GET /ib/contas/\\{id\\}/extrato.* retornou 5\\d\\d", "descricao": "Extrato da conta indisponível" },
+    { "padrao": "^PUT /ib/clientes/\\{id\\} retornou 409", "descricao": "Atualização de endereço recusada indevidamente" }
+  ]
+}
