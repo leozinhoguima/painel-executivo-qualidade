@@ -45,7 +45,7 @@ export function Cabecalho({ titulo, subtitulo, comAcoes = true, voltar, aoLadoDo
       {comAcoes && !controles && (
         <div className="flex flex-wrap items-center gap-4">
           <Link
-            href="/relatorio"
+            href="/relatorio?imprimir=1"
             className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-borda bg-cartao px-4 text-[14px] font-medium text-tinta hover:bg-neutro-fundo"
           >
             <Download aria-hidden="true" className="size-4" />

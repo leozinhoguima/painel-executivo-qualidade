@@ -111,7 +111,8 @@ Cada decisão traz o contexto e o porquê, para que possa ser explicada a um ges
 ### D23. "Copiar resumo" copia o relatório inteiro em texto simples
 **Decisão:** o botão copia título, resumo, indicadores, prontidão, problemas e a base de cálculo, em texto sem formatação (marcadores "•" e listas numeradas), para colar em e-mail, Teams ou WhatsApp. A tela mostra uma prévia ("Ver o texto que será copiado").
 **Por quê:** só o parágrafo do resumo, sem números, não basta para quem vai repassar. O texto é gerado por uma função pura e testada, com os mesmos rótulos do painel.
-**O botão "Baixar relatório (PDF)"** do cabeçalho abre esta página; o PDF é salvo pelo "Imprimir ou salvar em PDF". Não abrimos a janela de impressão automaticamente ao entrar, para não surpreender quem só quer ler.
+**O botão "Baixar relatório (PDF)"** do cabeçalho abre esta página já com a janela de salvar em PDF (`/relatorio?imprimir=1`). Quem entra pelo menu "Relatório semanal" só lê; a impressão continua no botão "Imprimir ou salvar em PDF".
+**Ajuste depois da fase 10:** antes, o botão só abria a página, sem a janela. Numa validação, o nome "Baixar" levou a esperar o PDF, então o botão passou a cumprir o que diz. O parâmetro é lido no navegador e removido do endereço logo depois, para a página continuar estática e recarregar não reabrir a janela. Gerar o PDF no servidor foi descartado: exigiria biblioteca e processamento extra, e o PDF do navegador já sai bom.
 
 ### D24. A API fictícia reproduz os problemas em aberto da narrativa
 **Decisão:** `demo-api/cenarios.json` ativa as mesmas falhas que estão em aberto no histórico: validação de documentos indisponível (502, 85%), QR Code intermitente (500, 30%), devolução parcial com valor integral, comprovante sem data e hora (50%), mensagem genérica no Pix por chave (45%), lentidão no limite do cartão (3,5 s, 80%) e conflito na atualização cadastral (409, 35%).
