@@ -24,24 +24,24 @@ export class ErroDadosInvalidos extends Error {
 
 type Objeto = Record<string, unknown>;
 
-const CRITICIDADES: readonly Criticidade[] = ["critica", "alta", "media", "baixa"];
+export const CRITICIDADES: readonly Criticidade[] = ["critica", "alta", "media", "baixa"];
 const ARTIGOS = ["o", "a", "os", "as"] as const;
 const SITUACOES = ["em-analise", "em-correcao", "aguardando-decisao"] as const;
 const ORIGENS = ["historico-ficticio", "suite-automatizada"] as const;
 
-function objeto(valor: unknown, origem: string, campo: string): Objeto {
+export function objeto(valor: unknown, origem: string, campo: string): Objeto {
   if (typeof valor !== "object" || valor === null || Array.isArray(valor)) {
     throw new ErroDadosInvalidos(origem, `"${campo}" deveria ser um objeto`);
   }
   return valor as Objeto;
 }
 
-function lista(valor: unknown, origem: string, campo: string): unknown[] {
+export function lista(valor: unknown, origem: string, campo: string): unknown[] {
   if (!Array.isArray(valor)) throw new ErroDadosInvalidos(origem, `"${campo}" deveria ser uma lista`);
   return valor;
 }
 
-function texto(o: Objeto, chave: string, origem: string): string {
+export function texto(o: Objeto, chave: string, origem: string): string {
   const v = o[chave];
   if (typeof v !== "string" || v.trim() === "") {
     throw new ErroDadosInvalidos(origem, `"${chave}" deveria ser um texto não vazio`);
@@ -49,11 +49,11 @@ function texto(o: Objeto, chave: string, origem: string): string {
   return v;
 }
 
-function textoOpcional(o: Objeto, chave: string, origem: string): string | undefined {
+export function textoOpcional(o: Objeto, chave: string, origem: string): string | undefined {
   return o[chave] === undefined ? undefined : texto(o, chave, origem);
 }
 
-function umDe<T extends string>(o: Objeto, chave: string, opcoes: readonly T[], origem: string): T {
+export function umDe<T extends string>(o: Objeto, chave: string, opcoes: readonly T[], origem: string): T {
   const v = o[chave];
   if (typeof v !== "string" || !(opcoes as readonly string[]).includes(v)) {
     throw new ErroDadosInvalidos(origem, `"${chave}" deveria ser um de: ${opcoes.join(", ")}`);

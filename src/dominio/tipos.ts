@@ -159,3 +159,69 @@ export interface BaseQualidade {
   acompanhamento: Acompanhamento[];
   traducoes: RegraTraducao[];
 }
+
+// ---------------------------------------------------------------------------
+// Sustentação: chamados em produção (data/chamados/chamados.json)
+// ---------------------------------------------------------------------------
+
+export type CategoriaChamado = "indisponibilidade" | "erro-transacao" | "lentidao" | "duvida" | "acesso";
+export type CanalChamado = "app" | "central" | "agencia";
+/** A prioridade do chamado usa a mesma escala da criticidade. */
+export type Prioridade = Criticidade;
+export type TipoEventoChamado = "abertura" | "fechamento" | "reabertura";
+
+export interface EventoChamadoArmazenado {
+  tipo: TipoEventoChamado;
+  /** Data e hora ISO 8601 com fuso. */
+  dataHora: string;
+}
+
+export interface ChamadoArmazenado {
+  /** Ex.: "CH-20261109-014" (data de abertura + sequência do dia). */
+  codigo: string;
+  sistemaId: string;
+  /** Presente quando o chamado se refere a uma funcionalidade do catálogo. */
+  funcionalidadeId?: string;
+  categoria: CategoriaChamado;
+  prioridade: Prioridade;
+  canal: CanalChamado;
+  /** Motivo em linguagem de negócio; é a chave dos "principais problemas". */
+  motivo: string;
+  /** Abertura primeiro; depois fechamentos e reaberturas alternados, em ordem. */
+  eventos: EventoChamadoArmazenado[];
+}
+
+export interface ArquivoChamados {
+  versao: 1;
+  aviso?: string;
+  /** Instante até o qual a central (fictícia) foi exportada; nenhum evento é posterior. */
+  geradoAte: string;
+  chamados: ChamadoArmazenado[];
+}
+
+export interface EventoChamado {
+  tipo: TipoEventoChamado;
+  instante: Instante;
+}
+
+export interface Chamado {
+  codigo: string;
+  sistemaId: string;
+  funcionalidadeId?: string;
+  categoria: CategoriaChamado;
+  prioridade: Prioridade;
+  canal: CanalChamado;
+  motivo: string;
+  abertura: Instante;
+  /** Em ordem cronológica; o primeiro é sempre a abertura. */
+  eventos: EventoChamado[];
+}
+
+/** Chamados validados, prontos para as regras de sustentação. */
+export interface BaseChamados {
+  sistemas: Sistema[];
+  /** Instante da exportação: referência de "agora" para a sustentação. */
+  referencia: Instante;
+  /** Ordenados pela abertura. */
+  chamados: Chamado[];
+}

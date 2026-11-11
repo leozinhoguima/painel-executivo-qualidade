@@ -1,5 +1,7 @@
 # Automação de qualidade: roda a suíte Playwright contra a API FICTÍCIA,
-# importa o relatório e grava a nova rodada em data/execucoes/.
+# importa o relatório e grava a nova rodada em data/execucoes/. Em seguida, exporta
+# os chamados da central FICTÍCIA até a mesma data (data/chamados/), para a
+# tela de sustentação andar junto com os testes.
 # O commit dispara o novo deploy do painel (Vercel), que exibe os dados atualizados.
 name: Rodada de qualidade
 
@@ -51,7 +53,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/execucoes/
+          git add data/execucoes/ data/chamados/
           if git diff --cached --quiet; then
             echo "Nenhuma rodada nova para gravar."
             exit 0

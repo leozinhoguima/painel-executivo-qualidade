@@ -14,7 +14,8 @@
     "api:demo": "tsx demo-api/servidor.ts",
     "test:api": "playwright test",
     "dados:importar": "tsx scripts/importar-relatorio.ts",
-    "qualidade": "tsx scripts/qualidade.ts"
+    "qualidade": "tsx scripts/qualidade.ts",
+    "dados:chamados": "tsx scripts/gerar-chamados.ts"
   },
   "dependencies": {
     "lucide-react": "1.71.0",

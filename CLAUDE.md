@@ -52,8 +52,9 @@ npm run typecheck
 npm test                 # testes unitários (Vitest)
 npm run build
 npm run dados:historico  # regenera data/execucoes/historico-ficticio.json (seed fixa)
+npm run dados:chamados   # regrava data/chamados/chamados.json até a última rodada (ou: -- <data ISO>)
 
-npm run qualidade        # FLUXO COMPLETO: suíte Playwright contra a API fictícia + importação
+npm run qualidade        # FLUXO COMPLETO: suíte Playwright + importação + chamados até a nova rodada
 npm run api:demo         # só a API fictícia (porta 4010; DEMO_SEED fixa o sorteio)
 npm run test:api         # só a suíte (gera test-results/relatorio-playwright.json)
 npm run dados:importar   # só a importação do relatório para data/execucoes/
@@ -64,8 +65,9 @@ Nunca use `sed` para editar tabelas Markdown com `|` ou `&`: use o editor.
 ## Estrutura
 
 ```
-data/                      catálogo, traduções, acompanhamento e execuções (JSON)
+data/                      catálogo, traduções, acompanhamento, execuções e chamados (JSON)
 scripts/historico/         roteiro de incidentes + gerador determinístico do histórico
+scripts/chamados/          roteiro da central de chamados fictícia + gerador por dia + atualizar.ts
 scripts/importacao/        leitura/gravação do relatório; qualidade.ts = fluxo completo
 demo-api/                  API fictícia (node:http) + cenarios.json (falhas configuráveis)
 tests/api/                 suíte Playwright: um teste por caso do catálogo (anotação "caso")
@@ -80,6 +82,8 @@ src/app/                   rotas (App Router)
 ```
 
 Ao mudar `scripts/historico/cenarios.ts` ou `data/catalogo.json`, rode `npm run dados:historico`. Um teste falha se o arquivo versionado estiver desatualizado. Códigos de defeito em `data/acompanhamento.json` dependem do histórico: confira-os depois de regenerar.
+
+Ao mudar `scripts/chamados/cenarios.ts` ou o gerador, rode `npm run dados:chamados` (o teste compara o arquivo com o gerador até o `geradoAte` gravado nele). Mudar o roteiro reescreve o passado dos chamados: faça isso só de propósito.
 
 ## Ritual de fim de fase
 
@@ -98,6 +102,8 @@ Ao mudar `scripts/historico/cenarios.ts` ou `data/catalogo.json`, rode `npm run 
 - API fictícia em servidor Node separado (`demo-api/`), com falhas que espelham os defeitos em aberto da narrativa.
 - Testes de coerência das visões usam só o histórico fictício (`carregarBaseDemonstracao`), para não quebrar quando rodadas reais forem importadas.
 - Mensagens de falha da suíte seguem o formato que `data/traducoes.json` reconhece; ao criar um teste novo, use os helpers de `tests/api/apoio.ts`.
+- Sustentação (`/sustentacao?recorte=dia|semana|mes`, padrão semana): chamados guardam só eventos (abertura → fechamento → reabertura → fechamento); tudo é derivado. Prazo da abertura ao 1º fechamento: crítica 4 h, alta 1 dia, média 3 dias, baixa 5 dias; meta 90% no prazo e reabertura até 5%. Dia compara com o mesmo dia da semana anterior; mês compara os mesmos dias do mês anterior. Referência = `geradoAte` do arquivo, que o robô alinha à última rodada.
+- Chamados fictícios desde 01/05/2026, seed por dia: regerar mais tarde mantém o passado. Surtos seguem as datas dos incidentes de teste; os em aberto não têm fim. Testes da visão geram os chamados em memória até 09/11/2026.
 
 ## Referência visual
 
@@ -116,3 +122,5 @@ Tokens: fundo #F4F6F9, cartão branco com borda #E2E8F0 e raio 12px, texto #0F17
 | 6 | API fictícia + suíte Playwright (75 casos) + importador + `npm run qualidade` | Concluída (validada) |
 | 7 | GitHub Actions: rodada às 06:00/18:00 + CI; repositório público | Concluída (validada) |
 | 8 | Deploy na Vercel (https://painel-executivo-qualidade.vercel.app) + README com screenshots | Concluída (validada) |
+| 9 | Sustentação (`/sustentacao`): central de chamados fictícia, regras, 6 indicadores, 7 gráficos, robô atualizando | Concluída — aguardando validação |
+| 10 | Cruzar testes e chamados (gerente, executiva, relatório) + lista técnica de chamados | Planejada |

@@ -1,6 +1,6 @@
 import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
-import type { BaseQualidade } from "@/dominio/tipos";
+import type { BaseChamados, BaseQualidade } from "@/dominio/tipos";
 import {
   montarBase,
   validarAcompanhamento,
@@ -8,6 +8,7 @@ import {
   validarCatalogo,
   validarTraducoes,
 } from "./validacao";
+import { montarBaseChamados, validarArquivoChamados } from "./validacaoChamados";
 
 /**
  * Acesso aos dados do painel. Lê os arquivos JSON versionados em `data/`
@@ -16,6 +17,7 @@ import {
  */
 export const PASTA_DADOS = path.join(process.cwd(), "data");
 export const ARQUIVO_HISTORICO = "historico-ficticio.json";
+export const ARQUIVO_CHAMADOS = "chamados/chamados.json";
 
 function lerJson(...partes: string[]): unknown {
   return JSON.parse(readFileSync(path.join(PASTA_DADOS, ...partes), "utf8"));
@@ -56,4 +58,15 @@ export function carregarBase(opcoes: OpcoesCarga = {}): BaseQualidade {
 /** Base só com o histórico fictício de demonstração (usada nos testes de coerência). */
 export function carregarBaseDemonstracao(): BaseQualidade {
   return carregarBase({ apenasArquivos: [ARQUIVO_HISTORICO] });
+}
+
+let chamadosEmCache: BaseChamados | null = null;
+
+/** Chamados da central de atendimento (fictícia), exportados para `data/chamados/`. */
+export function carregarChamados(): BaseChamados {
+  if (chamadosEmCache && process.env.NODE_ENV === "production") return chamadosEmCache;
+  const catalogo = validarCatalogo(lerJson("catalogo.json"));
+  const arquivo = validarArquivoChamados(lerJson(...ARQUIVO_CHAMADOS.split("/")), catalogo, `data/${ARQUIVO_CHAMADOS}`);
+  chamadosEmCache = montarBaseChamados(catalogo, arquivo);
+  return chamadosEmCache;
 }

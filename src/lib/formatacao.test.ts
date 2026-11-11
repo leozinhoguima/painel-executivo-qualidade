@@ -1,13 +1,17 @@
 import { describe, expect, it } from "vitest";
 import { instanteLocal } from "./datas";
 import {
+  descreverVariacaoRelativa,
   formatarDataHora,
   formatarIntervaloSemana,
   formatarPercentual,
   formatarPercentualCurto,
   formatarPontos,
   formatarTempoAberto,
+  formatarTempoAtendimento,
   minusculaInicial,
+  nomeDiaSemana,
+  nomeMes,
   pluralizar,
 } from "./formatacao";
 
@@ -52,5 +56,27 @@ describe("formatação pt-BR", () => {
   it("auxiliares de texto", () => {
     expect(pluralizar(1842, "teste", "testes")).toBe("1.842 testes");
     expect(minusculaInicial("Falha na validação")).toBe("falha na validação");
+  });
+});
+
+describe("formatação da sustentação", () => {
+  it("variação relativa em linguagem simples", () => {
+    expect(descreverVariacaoRelativa(0.123, "vs. semana anterior")).toEqual({ texto: "+12% vs. semana anterior", sentido: 1 });
+    expect(descreverVariacaoRelativa(-0.25, "vs. ontem")).toEqual({ texto: "−25% vs. ontem", sentido: -1 });
+    expect(descreverVariacaoRelativa(0.004, "vs. ontem")).toEqual({ texto: "Estável vs. ontem", sentido: 0 });
+    expect(descreverVariacaoRelativa(null, "vs. ontem")).toBeNull();
+  });
+
+  it("tempo de atendimento em horas ou dias", () => {
+    expect(formatarTempoAtendimento(5.2 * 3_600_000)).toEqual({ valor: "5,2", unidade: "h" });
+    expect(formatarTempoAtendimento(38.4 * 3_600_000)).toEqual({ valor: "1,6", unidade: "dias" });
+    expect(formatarTempoAtendimento(24 * 3_600_000)).toEqual({ valor: "1,0", unidade: "dia" });
+  });
+
+  it("nomes de dias e meses", () => {
+    expect(nomeDiaSemana(0)).toBe("segunda-feira");
+    expect(nomeDiaSemana(5, true)).toBe("sáb");
+    expect(nomeMes(3)).toBe("março");
+    expect(nomeMes(11, true)).toBe("nov");
   });
 });

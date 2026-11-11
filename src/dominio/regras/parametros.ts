@@ -1,5 +1,5 @@
-import { DIA_MS } from "@/lib/datas";
-import type { Severidade, StatusProntidao } from "../tipos";
+import { DIA_MS, HORA_MS } from "@/lib/datas";
+import type { Prioridade, Severidade, StatusProntidao } from "../tipos";
 
 /** Meta de sucesso dos testes: um sistema só está "Pronto" com 95% ou mais. */
 export const META_SUCESSO = 0.95;
@@ -38,3 +38,29 @@ export const ORDEM_STATUS: Record<StatusProntidao, number> = {
   "sem-dados": 2,
   pronto: 3,
 };
+
+// ---------------------------------------------------------------------------
+// Sustentação (chamados em produção)
+// ---------------------------------------------------------------------------
+
+/** Prazo de atendimento por prioridade, da abertura ao primeiro fechamento (tempo corrido). */
+export const PRAZO_ATENDIMENTO_MS: Record<Prioridade, number> = {
+  critica: 4 * HORA_MS,
+  alta: 1 * DIA_MS,
+  media: 3 * DIA_MS,
+  baixa: 5 * DIA_MS,
+};
+/** Meta: pelo menos 90% dos chamados resolvidos dentro do prazo. */
+export const META_NO_PRAZO = 0.9;
+/** Meta de taxa de reabertura: no máximo 5% dos fechamentos voltam. */
+export const META_REABERTURA = 0.05;
+/** Dias exibidos no gráfico de abertos × fechados. */
+export const DIAS_GRAFICO_DIARIO = 30;
+/** Dias exibidos na evolução da fila em aberto. */
+export const DIAS_GRAFICO_FILA = 90;
+/** Meses fechados no comparativo mês a mês. */
+export const MESES_COMPARATIVO = 6;
+/** Semanas fechadas usadas na média por dia da semana. */
+export const SEMANAS_MEDIA_DIA_SEMANA = 8;
+/** Quantidade de itens em "Principais problemas". */
+export const LIMITE_PROBLEMAS_SUSTENTACAO = 5;

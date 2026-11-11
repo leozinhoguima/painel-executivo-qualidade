@@ -126,3 +126,58 @@ export function minusculaInicial(texto: string): string {
 export function maiusculaInicial(texto: string): string {
   return texto.charAt(0).toLocaleUpperCase("pt-BR") + texto.slice(1);
 }
+
+// ---------------------------------------------------------------------------
+// Sustentação
+// ---------------------------------------------------------------------------
+
+const DIAS_SEMANA = [
+  "segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado", "domingo",
+];
+const DIAS_SEMANA_CURTOS = ["seg", "ter", "qua", "qui", "sex", "sáb", "dom"];
+
+/** 0 = segunda … 6 = domingo → "segunda-feira" (ou "seg" na forma curta). */
+export function nomeDiaSemana(indice: number, curto = false): string {
+  return (curto ? DIAS_SEMANA_CURTOS : DIAS_SEMANA)[indice];
+}
+
+/** 1 a 12 → "novembro" (ou "nov" na forma curta). */
+export function nomeMes(mes: number, curto = false): string {
+  const nome = MESES[mes - 1];
+  return curto ? nome.slice(0, 3) : nome;
+}
+
+/** "08/11/2026" */
+export function formatarData(instante: Instante): string {
+  const l = paraDataLocal(instante);
+  return `${dois(l.dia)}/${dois(l.mes)}/${l.ano}`;
+}
+
+/** "08/11" */
+export function formatarDiaMes(instante: Instante): string {
+  const l = paraDataLocal(instante);
+  return `${dois(l.dia)}/${dois(l.mes)}`;
+}
+
+/**
+ * Variação relativa em linguagem simples: "+12% vs. semana anterior",
+ * "Estável vs. semana anterior". Nula quando não há base de comparação.
+ */
+export function descreverVariacaoRelativa(
+  fracao: number | null,
+  comparacao: string,
+): { texto: string; sentido: 1 | -1 | 0 } | null {
+  if (fracao === null) return null;
+  const pontos = Math.round(fracao * 100);
+  if (pontos === 0) return { texto: `Estável ${comparacao}`, sentido: 0 };
+  const sinal = pontos > 0 ? "+" : MENOS;
+  return { texto: `${sinal}${formatarInteiro(Math.abs(pontos))}% ${comparacao}`, sentido: pontos > 0 ? 1 : -1 };
+}
+
+/** Tempo de atendimento: menos de 1 dia em horas ("5,2 h"), senão em dias ("1,6 dias"). */
+export function formatarTempoAtendimento(ms: number): { valor: string; unidade: string } {
+  const horas = ms / 3_600_000;
+  if (horas < 24) return { valor: formatarDecimal(horas), unidade: "h" };
+  const dias = horas / 24;
+  return { valor: formatarDecimal(dias), unidade: Math.round(dias * 10) === 10 ? "dia" : "dias" };
+}

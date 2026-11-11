@@ -34,6 +34,7 @@ Um painel em três níveis de detalhe, alimentado **automaticamente** por uma su
 | **Visão do gerente** | Gerência do sistema | Sucesso por funcionalidade, defeitos em aberto e situação, nos últimos 7, 30 ou 90 dias |
 | **Visão técnica** | Time de QA e desenvolvimento | Cada execução com a mensagem de erro original **e** a tradução de negócio |
 | **Relatório semanal** | Quem repassa a informação | Uma folha A4 para imprimir ou salvar em PDF, mais o texto pronto para e-mail |
+| **Sustentação** | Gestão de sustentação | Chamados em produção por dia, semana ou mês: abertos, fechados, reabertos, fila, prazo de atendimento, comparativos e principais problemas |
 
 <table>
   <tr>
@@ -89,6 +90,9 @@ Todos os indicadores são **calculados a partir dos registros**, nunca digitados
 | **Defeito** | aberto quando o mesmo problema de negócio falha 2 vezes com menos de 4 dias entre as falhas; resolvido após 4 dias sem falhas |
 | **Tempo médio de correção** | média em dias corridos da abertura à resolução, nos últimos 30 dias (meta: até 3 dias) |
 | **Resumo da semana** | texto gerado a partir dos indicadores da última semana fechada |
+| **Chamados** | abertos, fechados e reabertos são eventos no período; "em aberto" = o último evento até a data é abertura ou reabertura |
+| **Prazo de atendimento** | da abertura ao primeiro fechamento: crítica 4 h, alta 1 dia, média 3 dias, baixa 5 dias (meta: 90% no prazo) |
+| **Taxa de reabertura** | reaberturas ÷ fechamentos do período (meta: até 5%) |
 
 **Camada de tradução:** cada mensagem técnica passa por regras ([`data/traducoes.json`](data/traducoes.json)) que a convertem em linguagem de negócio.
 
@@ -102,10 +106,10 @@ POST /onboarding/documentos/validacao retornou 502 (esperado 200)
 ## Arquitetura
 
 ```
-data/                 catálogo, traduções, acompanhamento de defeitos e execuções (JSON)
+data/                 catálogo, traduções, acompanhamento de defeitos, execuções e chamados (JSON)
 demo-api/             API fictícia (node:http) com falhas configuráveis
 tests/api/            suíte Playwright: um teste por caso do catálogo
-scripts/              gerador do histórico, importador e fluxo completo (npm run qualidade)
+scripts/              geradores do histórico e dos chamados, importador e fluxo completo (npm run qualidade)
 src/
   dominio/            tipos, regras de cálculo (funções puras) e montagem de cada visão
   importacao/         conversão do relatório JSON do Playwright
@@ -177,6 +181,7 @@ Esse comando sobe a API fictícia, roda os 75 testes, importa o resultado e grav
 | `npm run test:api` | só a suíte Playwright |
 | `npm run api:demo` | só a API fictícia (porta 4010) |
 | `npm run dados:historico` | regenera o histórico fictício (seed fixa) |
+| `npm run dados:chamados` | regrava os chamados fictícios até a última rodada (ou até a data informada) |
 | `npm run lint` / `npm run typecheck` / `npm run build` | verificações do CI |
 
 ## Stack
@@ -185,7 +190,8 @@ Next.js 16 (App Router) · React 19 · TypeScript 5.9 · Tailwind CSS 4 · Recha
 
 ## Evoluções possíveis
 
-- Integração com um sistema de chamados real (por exemplo, o Jira) no lugar do arquivo de acompanhamento.
+- Integração com um sistema de chamados real (por exemplo, o Jira) no lugar do arquivo de acompanhamento e da central fictícia.
+- Cruzar testes e chamados nas telas: chamados por sistema na visão do gerente e na visão executiva.
 - Banco de dados quando o volume de execuções justificar.
 - Envio automático do relatório semanal por e-mail.
 - Metas de sucesso por sistema e alertas quando um sistema mudar de status.

@@ -127,6 +127,36 @@ Cada decisão traz o contexto e o porquê, para que possa ser explicada a um ges
 **Decisão:** na tabela de defeitos da visão do gerente, a funcionalidade é um link para as falhas dela na visão técnica, no mesmo período.
 **Por quê:** liga os três níveis (diretor → gerente → técnico). O gestor vê o problema em linguagem de negócio e, se precisar, o time técnico chega à mensagem original sem procurar.
 
+### D26. Sustentação na mesma aplicação, como uma área nova
+**Contexto:** depois da publicação, um ex-gestor sugeriu um "dever de casa" sobre sustentação: chamados abertos por dia, semana e mês, fechados, reabertos, principais problemas e gráficos de comparação.
+**Decisão:** a sustentação entra como uma área do mesmo painel (`/sustentacao`), com os mesmos sistemas fictícios, em vez de um projeto separado.
+**Por quê:** é a mesma pergunta ("a qualidade está boa?") vista depois da entrada em produção. Juntas, as duas áreas contam o que os testes pegaram e o que chegou ao cliente, e os incidentes do histórico de testes aparecem também nos chamados. Layout, componentes, regras de data e automação são reaproveitados.
+
+### D27. Chamados derivados de eventos
+**Decisão:** cada chamado guarda só a sequência de eventos (abertura, fechamento, reabertura, fechamento…). "Aberto", "fechado", "reaberto" e "em aberto agora" são calculados por funções puras (`src/dominio/regras/chamados.ts`).
+**Por quê:** segue a regra do projeto (nenhum indicador digitado à parte) e permite responder a qualquer data: quantos estavam em aberto ao fim de cada dia sai dos mesmos registros.
+**Contagens:** "fechados" e "reabertos" contam eventos no período (um chamado reaberto pode ser fechado duas vezes). Taxa de reabertura = reaberturas ÷ fechamentos do mesmo período.
+
+### D28. Prazo de atendimento por prioridade
+**Decisão:** crítica 4 h, alta 1 dia, média 3 dias e baixa 5 dias, em tempo corrido, da abertura ao **primeiro** fechamento. Meta: 90% no prazo. Meta de reabertura: até 5%. Um chamado em aberto além do prazo conta como "fora do prazo".
+**Por quê:** é o indicador que a gestão de sustentação mais acompanha. Medir até o primeiro fechamento evita contar o mesmo chamado duas vezes; a reabertura tem indicador próprio. Os prazos são fictícios e ficam em `parametros.ts`.
+
+### D29. Recortes de dia, semana e mês, sempre com dias completos
+**Decisão:** o seletor tem Dia, Semana (padrão) e Mês, na URL (`?recorte=`).
+- **Dia:** o último dia completo, comparado com o **mesmo dia da semana anterior**, porque segunda e domingo têm volumes muito diferentes.
+- **Semana:** a última semana fechada, como na visão executiva.
+- **Mês:** do dia 1 até o último dia completo, comparado com os mesmos dias do mês anterior (9 dias contra 9 dias, nunca 9 contra 31). No dia 1, mostra o mês anterior inteiro.
+
+**Por quê:** comparar períodos de tamanho ou perfil diferentes daria variações enganosas. Os cartões, as distribuições e os problemas seguem o recorte; os gráficos de evolução (30 dias, 90 dias, 6 meses, 8 semanas) têm janela fixa, escrita no próprio cartão.
+
+### D30. Gráficos escolhidos pela pergunta
+**Decisão:** barras agrupadas de abertos × fechados por dia (mostram se a fila cresce), linha da fila em aberto, barras mês a mês, a última semana em destaque contra a média das 8 anteriores, roscas para tipo de problema e prioridade e barras horizontais por sistema.
+**Por quê:** cada forma responde a uma pergunta. As roscas foram pedidas e servem para "como o todo se divide", com no máximo 5 partes e os números sempre escritos ao lado. Para comparar sistemas, barras ordenadas leem melhor que fatias. A paleta categórica foi validada para daltonismo, e a cor segue a entidade (abertos é sempre azul, fechados laranja, reabertos verde-água).
+
+### D31. Os chamados acompanham os testes e continuam "vivos"
+**Decisão:** o roteiro (`scripts/chamados/cenarios.ts`) tem um volume de base e "surtos" ligados a funcionalidades. De agosto em diante, os surtos têm as mesmas datas dos incidentes do histórico de testes; os que seguem em aberto não têm fim. A cada rodada, o robô regrava os chamados até a data da rodada.
+**Por quê:** a sustentação e os testes têm a mesma data de referência, e a tela não fica parada. Exemplos da narrativa: o problema longo de Cartões em setembro leva a fila a 385 chamados e, com correções apressadas, a uma onda de reaberturas em outubro (15% na semana 41); na semana 45, "Cadastro travado no envio de documentos" lidera os problemas.
+
 ---
 
 ## Técnicas
@@ -246,6 +276,19 @@ Cada decisão traz o contexto e o porquê, para que possa ser explicada a um ges
 ### T25. Suíte com fixture do Playwright
 **Decisão:** os testes são declarados como `test(...caso("pix-chave-01"), async ({ api }) => …)` em cada arquivo de sistema. A fixture `api` lê a anotação do caso e entrega o cliente já configurado.
 **Por quê:** na versão anterior, todos os testes apareciam no log como `apoio.ts:85`. Agora cada teste aponta para o arquivo e a linha certos (`pix.spec.ts:6`), o que facilita a leitura dos logs do Actions por quem avalia o projeto.
+
+### T26. Gerador de chamados determinístico por dia
+**Decisão:** cada dia tem a própria semente (seed do cenário + número do dia) e decide, no dia da abertura, a vida inteira dos seus chamados. A exportação (`data/chamados/chamados.json`) só mostra os eventos até `geradoAte`.
+**Por quê:** gerar de novo um dia depois mantém o passado idêntico e só acrescenta o que aconteceu (há um teste para isso). Assim o arquivo pode ser regravado inteiro a cada rodada, com diferenças pequenas no Git, e um teste confere que o arquivo versionado é exatamente o que o gerador produz até a data gravada nele. Os testes de coerência da tela geram os chamados em memória até 09/11/2026, sem depender do arquivo que o robô atualiza.
+**Volume:** cerca de 5.500 chamados desde 01/05/2026, um por linha, em 1,7 MB.
+
+### T27. Sustentação renderizada sob demanda
+**Decisão:** `/sustentacao` lê `?recorte=` no servidor, como o período do gerente (T15).
+**Por quê:** o link compartilhado abre o mesmo recorte e funciona sem JavaScript. Os gráficos recebem só os pontos já calculados.
+
+### T28. Tabelas acessíveis dentro de um `div`
+**Decisão:** cada gráfico tem uma tabela equivalente para leitores de tela, envolvida por um `div` com `sr-only`.
+**Por quê:** uma `<table>` ignora a altura de 1 px do `sr-only`; a tabela de 90 linhas da fila esticava a página e criava rolagem horizontal no celular.
 
 ### T14. Nomes de arquivo dos mockups
 **Decisão:** renomeados para `visao-diretor.png` e `visao-gerente.png` (sem acentos, espaços ou `@`).

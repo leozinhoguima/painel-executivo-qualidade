@@ -1,6 +1,7 @@
 import type { Instante } from "@/dominio/tipos";
 
-export const HORA_MS = 3_600_000;
+export const MINUTO_MS = 60_000;
+export const HORA_MS = 60 * MINUTO_MS;
 export const DIA_MS = 24 * HORA_MS;
 export const SEMANA_MS = 7 * DIA_MS;
 
