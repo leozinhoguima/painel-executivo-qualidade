@@ -122,5 +122,5 @@ Tokens: fundo #F4F6F9, cartão branco com borda #E2E8F0 e raio 12px, texto #0F17
 | 6 | API fictícia + suíte Playwright (75 casos) + importador + `npm run qualidade` | Concluída (validada) |
 | 7 | GitHub Actions: rodada às 06:00/18:00 + CI; repositório público | Concluída (validada) |
 | 8 | Deploy na Vercel (https://painel-executivo-qualidade.vercel.app) + README com screenshots | Concluída (validada) |
-| 9 | Sustentação (`/sustentacao`): central de chamados fictícia, regras, 6 indicadores, 7 gráficos, robô atualizando | Concluída — aguardando validação |
+| 9 | Sustentação (`/sustentacao`): central de chamados fictícia, regras, 6 indicadores, 7 gráficos, robô atualizando | Concluída (validada) |
 | 10 | Cruzar testes e chamados (gerente, executiva, relatório) + lista técnica de chamados | Planejada |
