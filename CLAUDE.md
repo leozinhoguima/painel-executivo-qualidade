@@ -92,8 +92,8 @@ Ao mudar `scripts/historico/cenarios.ts` ou `data/catalogo.json`, rode `npm run 
 
 - Dados em JSON versionados em `data/`. Defeitos **derivados** das execuções: um defeito é funcionalidade + descrição traduzida; abre com 2 falhas a menos de 4 dias uma da outra; resolve após 4 dias sem falhas e 2 sucessos. `acompanhamento.json` acrescenta situação, responsável e severidade.
 - Semáforo: Risco = taxa < 85% ou defeito crítico aberto; Atenção = taxa < 95% ou defeito alto aberto; Pronto = demais. A taxa é comparada arredondada como exibida.
-- Taxa de sucesso = execuções com sucesso ÷ execuções no período. Meta única: 95%. Meta de correção: até 3 dias (janela de | 3 | Visão do gerente (`/sistemas`, `/sistemas/[id]?periodo=7|30|90`) | Concluída (validada) | dias).
-- Data de referência = última rodada; o diretor vê a última semana fechada (seg–dom) e tendência de 6 semanas; o gerente vê janela móvel de 7/| 3 | Visão do gerente (`/sistemas`, `/sistemas/[id]?periodo=7|30|90`) | Concluída (validada) |/90 dias (padrão 30), comparada com o período anterior. Defeitos em aberto são sempre os da data de referência.
+- Taxa de sucesso = execuções com sucesso ÷ execuções no período. Meta única: 95%. Meta de correção: até 3 dias (janela de 30 dias).
+- Data de referência = última rodada; o diretor vê a última semana fechada (seg–dom) e tendência de 6 semanas; o gerente vê janela móvel de 7/30/90 dias (padrão 30), comparada com o período anterior. Defeitos em aberto são sempre os da data de referência.
 - Histórico fictício: semanas 33–45/2026, rodadas às 06:00 e 18:00, última em 09/11/2026 06:00, 75 casos de teste, seed fixa, mesmo formato dos dados importados.
 - API fictícia em servidor Node separado (`demo-api/`), com falhas que espelham os defeitos em aberto da narrativa.
 - Testes de coerência das visões usam só o histórico fictício (`carregarBaseDemonstracao`), para não quebrar quando rodadas reais forem importadas.
@@ -102,7 +102,7 @@ Ao mudar `scripts/historico/cenarios.ts` ou `data/catalogo.json`, rode `npm run 
 ## Referência visual
 
 Mockups em `docs/referencia/` (`visao-diretor.png`, `visao-gerente.png`). Ler no início da Fase 2.
-Tokens: fundo #F4F6F9, cartão branco com borda #E2E8F0 e raio 12px, texto #0F172A/#475569, destaque #2F5BD3, sidebar #0F1B33, status verde #15803D, âmbar #B45| 3 | Visão do gerente (`/sistemas`, `/sistemas/[id]?periodo=7|30|90`) | Concluída (validada) |9, vermelho #B91C1C (sempre com ícone e texto). Fonte IBM Plex Sans, números tabulares.
+Tokens: fundo #F4F6F9, cartão branco com borda #E2E8F0 e raio 12px, texto #0F172A/#475569, destaque #2F5BD3, sidebar #0F1B33, status verde #15803D, âmbar #B45309, vermelho #B91C1C (sempre com ícone e texto). Fonte IBM Plex Sans, números tabulares.
 
 ## Plano e status
 
