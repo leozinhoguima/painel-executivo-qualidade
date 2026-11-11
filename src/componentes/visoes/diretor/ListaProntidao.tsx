@@ -4,7 +4,7 @@ import { Cartao } from "@/componentes/ui/Cartao";
 import { SeloStatus } from "@/componentes/ui/Selos";
 import { DETALHE_REGRA_SEMAFORO, TEXTO_REGRA_SEMAFORO } from "@/dominio/regras/prontidao";
 import type { LinhaProntidao } from "@/dominio/visoes/diretor";
-import { formatarPercentual } from "@/lib/formatacao";
+import { formatarPercentual, pluralizar } from "@/lib/formatacao";
 
 /** Semáforo por sistema, do pior para o melhor; cada linha leva à visão do gerente. */
 export function ListaProntidao({ linhas }: { linhas: LinhaProntidao[] }) {
@@ -22,7 +22,14 @@ export function ListaProntidao({ linhas }: { linhas: LinhaProntidao[] }) {
               href={`/sistemas/${linha.sistema.id}`}
               className="group -mx-2 flex min-h-[64px] items-center gap-3 rounded-lg px-2 hover:bg-fundo sm:min-h-[76px]"
             >
-              <span className="flex-1 text-[15px] font-medium">{linha.sistema.nome}</span>
+              <span className="flex-1">
+                <span className="block text-[15px] font-medium">{linha.sistema.nome}</span>
+                {linha.chamadosSemana !== null && (
+                  <span className="numeros block text-[12px] text-tinta-suave">
+                    {pluralizar(linha.chamadosSemana, "chamado de cliente", "chamados de clientes")} na semana
+                  </span>
+                )}
+              </span>
               <span className="numeros w-16 text-right text-[15px] font-semibold">{formatarPercentual(linha.taxa)}</span>
               <SeloStatus status={linha.status} />
               <ChevronRight aria-hidden="true" className="size-4 text-tinta-suave opacity-50 group-hover:opacity-100" />

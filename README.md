@@ -30,7 +30,7 @@ Um painel em três níveis de detalhe, alimentado **automaticamente** por uma su
 
 | Nível | Para quem | O que responde |
 |---|---|---|
-| **Visão executiva** | Diretoria | Resumo da semana em texto, semáforo de prontidão, tendência e os 3 principais problemas |
+| **Visão executiva** | Diretoria | Resumo da semana em texto, semáforo de prontidão, tendência e os 3 principais problemas, com os chamados de clientes de cada um |
 | **Visão do gerente** | Gerência do sistema | Sucesso por funcionalidade, defeitos em aberto e situação, nos últimos 7, 30 ou 90 dias |
 | **Visão técnica** | Time de QA e desenvolvimento | Cada execução com a mensagem de erro original **e** a tradução de negócio |
 | **Relatório semanal** | Quem repassa a informação | Uma folha A4 para imprimir ou salvar em PDF, mais o texto pronto para e-mail |
@@ -196,7 +196,6 @@ Next.js 16 (App Router) · React 19 · TypeScript 5.9 · Tailwind CSS 4 · Recha
 ## Evoluções possíveis
 
 - Integração com um sistema de chamados real (por exemplo, o Jira) no lugar do arquivo de acompanhamento e da central fictícia.
-- Levar os chamados à visão executiva e ao relatório semanal.
 - Banco de dados quando o volume de execuções justificar.
 - Envio automático do relatório semanal por e-mail.
 - Metas de sucesso por sistema e alertas quando um sistema mudar de status.

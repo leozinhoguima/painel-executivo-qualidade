@@ -5,13 +5,13 @@ import { IndicadoresDiretor } from "@/componentes/visoes/diretor/IndicadoresDire
 import { ListaProblemas } from "@/componentes/visoes/diretor/ListaProblemas";
 import { ListaProntidao } from "@/componentes/visoes/diretor/ListaProntidao";
 import { ResumoSemana } from "@/componentes/visoes/diretor/ResumoSemana";
-import { carregarBase } from "@/dados/repositorio";
+import { carregarBase, carregarChamadosOuNada } from "@/dados/repositorio";
 import { META_SUCESSO } from "@/dominio/regras/parametros";
 import { montarVisaoDiretor } from "@/dominio/visoes/diretor";
 import { formatarSemana } from "@/lib/formatacao";
 
 export default function VisaoExecutiva() {
-  const visao = montarVisaoDiretor(carregarBase());
+  const visao = montarVisaoDiretor(carregarBase(), carregarChamadosOuNada());
 
   if (!visao) {
     return (

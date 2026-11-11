@@ -3,14 +3,14 @@ import { Cabecalho } from "@/componentes/layout/Cabecalho";
 import { EstadoVazio } from "@/componentes/ui/Estados";
 import { AcoesRelatorio } from "@/componentes/visoes/relatorio/AcoesRelatorio";
 import { FolhaRelatorio } from "@/componentes/visoes/relatorio/FolhaRelatorio";
-import { carregarBase } from "@/dados/repositorio";
+import { carregarBase, carregarChamadosOuNada } from "@/dados/repositorio";
 import { montarRelatorio } from "@/dominio/visoes/relatorio";
 import { formatarSemana } from "@/lib/formatacao";
 
 export const metadata: Metadata = { title: "Relatório semanal" };
 
 export default function Relatorio() {
-  const relatorio = montarRelatorio(carregarBase());
+  const relatorio = montarRelatorio(carregarBase(), carregarChamadosOuNada());
 
   if (!relatorio) {
     return (

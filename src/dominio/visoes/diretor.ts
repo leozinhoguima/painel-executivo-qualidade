@@ -1,4 +1,14 @@
-import { semanasFechadas, type Semana } from "@/lib/datas";
+import { SEMANA_MS, semanasFechadas, type Semana } from "@/lib/datas";
+import {
+  abertosNaJanela,
+  chamadosEmAberto,
+  contarEventos,
+  estaForaDoPrazo,
+  principaisProblemas,
+  resumirAtendimento,
+  variacaoRelativa,
+} from "../regras/chamados";
+import { contarChamadosPorDefeito, vincularChamados } from "../regras/vinculo";
 import { janelaMovel } from "../regras/periodo";
 import { classificarProntidao, compararPiorPrimeiro } from "../regras/prontidao";
 import {
@@ -8,12 +18,13 @@ import {
   diasEmAberto,
   tempoMedioCorrecao,
 } from "../regras/defeitos";
-import { JANELA_CORRECAO_DIAS, META_CORRECAO_DIAS, SEMANAS_TENDENCIA } from "../regras/parametros";
+import { JANELA_CORRECAO_DIAS, META_CORRECAO_DIAS, META_NO_PRAZO, SEMANAS_TENDENCIA } from "../regras/parametros";
 import { descreverImpacto, proporcaoFalhasRecentes } from "../regras/problemas";
 import { gerarResumoSemana, type TrechoResumo } from "../regras/resumo";
 import { calcularTaxa, noIntervalo, variacaoEmPontos } from "../regras/taxa";
 import { tendenciaSemanal } from "../regras/tendencia";
 import type {
+  BaseChamados,
   BaseQualidade,
   Defeito,
   Instante,
@@ -29,6 +40,8 @@ export interface LinhaProntidao {
   taxa: number | null;
   status: StatusProntidao;
   defeitosAbertos: number;
+  /** Chamados de clientes abertos na semana; nulo sem dados de chamados. */
+  chamadosSemana: number | null;
 }
 
 export interface ProblemaPrincipal {
@@ -39,6 +52,21 @@ export interface ProblemaPrincipal {
   severidade: Severidade;
   situacao: SituacaoDefeito;
   diasAberto: number;
+  /** Chamados de clientes ligados ao defeito; nulo sem dados de chamados. */
+  chamados: number | null;
+}
+
+/** Sustentação na mesma semana fechada da visão executiva. */
+export interface SustentacaoSemana {
+  abertos: number;
+  abertosAnterior: number;
+  variacao: number | null;
+  fechados: number;
+  emAberto: number;
+  foraDoPrazo: number;
+  noPrazo: { taxa: number | null; meta: number };
+  /** Os 3 motivos com mais chamados na semana. */
+  motivos: { motivo: string; sistema: Pick<Sistema, "nome" | "artigo">; quantidade: number }[];
 }
 
 export interface VisaoDiretor {
@@ -63,13 +91,37 @@ export interface VisaoDiretor {
   prontidao: LinhaProntidao[];
   tendencia: { rotulo: string; taxa: number | null; execucoes: number }[];
   problemas: ProblemaPrincipal[];
+  /** Nula quando os chamados não foram informados. */
+  sustentacao: SustentacaoSemana | null;
+}
+
+function montarSustentacao(chamados: BaseChamados, semana: Semana, nomes: Map<string, Sistema>): SustentacaoSemana {
+  const anterior = { inicio: semana.inicio - SEMANA_MS, fim: semana.inicio };
+  const atual = contarEventos(chamados.chamados, semana);
+  const antes = contarEventos(chamados.chamados, anterior);
+  const emAberto = chamadosEmAberto(chamados.chamados, chamados.referencia);
+  return {
+    abertos: atual.abertos,
+    abertosAnterior: antes.abertos,
+    variacao: variacaoRelativa(atual.abertos, antes.abertos),
+    fechados: atual.fechados,
+    emAberto: emAberto.length,
+    foraDoPrazo: emAberto.filter((c) => estaForaDoPrazo(c, chamados.referencia)).length,
+    noPrazo: { taxa: resumirAtendimento(chamados.chamados, semana).taxaNoPrazo, meta: META_NO_PRAZO },
+    motivos: principaisProblemas(chamados.chamados, semana, anterior, chamados.referencia, 3).map((p) => ({
+      motivo: p.motivo,
+      sistema: nomes.get(p.sistemaId) ?? { nome: p.sistemaId, artigo: "o" },
+      quantidade: p.quantidade,
+    })),
+  };
 }
 
 /**
  * Monta todos os números da visão executiva a partir dos registros.
+ * Os chamados são opcionais: sem eles, a visão mostra só os testes.
  * Retorna nulo quando não há nenhuma rodada de testes.
  */
-export function montarVisaoDiretor(base: BaseQualidade): VisaoDiretor | null {
+export function montarVisaoDiretor(base: BaseQualidade, chamados?: BaseChamados): VisaoDiretor | null {
   const ultimaRodada = base.rodadas.at(-1);
   if (!ultimaRodada) return null;
 
@@ -85,6 +137,12 @@ export function montarVisaoDiretor(base: BaseQualidade): VisaoDiretor | null {
   const funcionalidades = new Map(base.catalogo.funcionalidades.map((f) => [f.id, f]));
   const sistemasPorId = new Map(base.catalogo.sistemas.map((s) => [s.id, s]));
 
+  const chamadosDaSemana = chamados ? abertosNaJanela(chamados.chamados, semana) : null;
+  const sustentacao = chamados ? montarSustentacao(chamados, semana, sistemasPorId) : null;
+  const chamadosPorDefeito = chamados
+    ? contarChamadosPorDefeito(vincularChamados(chamados.chamados, defeitos))
+    : null;
+
   const abertosPorSistema = (sistemaId: string) =>
     abertos.filter((d) => d.sistemaId === sistemaId).sort(compararPorPrioridade);
 
@@ -97,6 +155,7 @@ export function montarVisaoDiretor(base: BaseQualidade): VisaoDiretor | null {
         taxa,
         status: classificarProntidao(taxa, doSistema.map((d) => d.severidade)),
         defeitosAbertos: doSistema.length,
+        chamadosSemana: chamadosDaSemana ? chamadosDaSemana.filter((c) => c.sistemaId === sistema.id).length : null,
       };
     })
     .sort(compararPiorPrimeiro);
@@ -123,6 +182,15 @@ export function montarVisaoDiretor(base: BaseQualidade): VisaoDiretor | null {
     taxaSemana,
     variacaoPontos,
     aguardandoDecisao: abertos.filter((d) => d.situacao === "aguardando-decisao").length,
+    ...(sustentacao
+      ? {
+          chamados: {
+            abertos: sustentacao.abertos,
+            variacao: sustentacao.variacao,
+            principalMotivo: sustentacao.motivos[0] ?? null,
+          },
+        }
+      : {}),
   });
 
   const problemas: ProblemaPrincipal[] = [...abertos]
@@ -140,6 +208,7 @@ export function montarVisaoDiretor(base: BaseQualidade): VisaoDiretor | null {
         severidade: d.severidade,
         situacao: d.situacao,
         diasAberto: diasEmAberto(d, referencia),
+        chamados: chamadosPorDefeito ? (chamadosPorDefeito.get(d.codigo) ?? 0) : null,
       };
     });
 
@@ -171,5 +240,6 @@ export function montarVisaoDiretor(base: BaseQualidade): VisaoDiretor | null {
       execucoes: p.taxa.total,
     })),
     problemas,
+    sustentacao,
   };
 }

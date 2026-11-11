@@ -2,7 +2,7 @@ import { Cartao } from "@/componentes/ui/Cartao";
 import { SeloSeveridade } from "@/componentes/ui/Selos";
 import { ROTULO_SITUACAO } from "@/dominio/rotulos";
 import type { ProblemaPrincipal } from "@/dominio/visoes/diretor";
-import { formatarTempoAberto } from "@/lib/formatacao";
+import { formatarTempoAberto, pluralizar } from "@/lib/formatacao";
 
 /** Os principais problemas em aberto, em linguagem de negócio. */
 export function ListaProblemas({ problemas }: { problemas: ProblemaPrincipal[] }) {
@@ -27,6 +27,9 @@ export function ListaProblemas({ problemas }: { problemas: ProblemaPrincipal[] }
                   <p className="text-[15px] font-medium">{p.titulo}</p>
                   <p className="text-[13px] text-tinta-suave">
                     {p.sistemaNome} · {p.impacto}
+                    {p.chamados ? (
+                      <span className="numeros"> · {pluralizar(p.chamados, "chamado de cliente", "chamados de clientes")}</span>
+                    ) : null}
                     {p.situacao === "aguardando-decisao" && (
                       <span className="font-semibold text-tinta"> · {ROTULO_SITUACAO[p.situacao]}</span>
                     )}

@@ -170,6 +170,14 @@ Cada decisão traz o contexto e o porquê, para que possa ser explicada a um ges
 **Decisão:** `/sustentacao/chamados` lista cada chamado, do mais recente para o mais antigo, com filtros de período (pela abertura), sistema, funcionalidade, tipo, prioridade e situação (em aberto, fora do prazo, reabertos, fechados). Período padrão: 30 dias. A situação é sempre a da data de referência. "Principais problemas" e a coluna de chamados do gerente levam à lista já filtrada (por motivo ou por defeito). Com um defeito escolhido, o período é ignorado e aparecem todos os chamados ligados a ele, para que o total bata com o número da tabela de defeitos.
 **Por quê:** completa a navegação gestor → investigação, como a visão técnica faz com as execuções de teste.
 
+### D35. Chamados na visão executiva, sem cartão novo
+**Decisão:** a visão executiva usa os chamados da mesma semana fechada em três lugares: uma frase no resumo ("Os clientes abriram 325 chamados (+93% em relação à semana anterior); o principal motivo foi…"), a contagem da semana em cada linha do semáforo e os chamados ligados a cada um dos principais problemas. Não há quinto cartão.
+**Por quê:** a fileira de 4 cartões está equilibrada e um quinto quebraria a grade. O diretor vê o efeito nos clientes junto de cada informação que já lê. Sem os chamados, a visão fica exatamente como antes (há teste para isso).
+
+### D36. Relatório semanal com sustentação, ainda em uma folha
+**Decisão:** o relatório ganhou a coluna "Chamados" na prontidão, os chamados de cada problema e uma seção "Sustentação · chamados de clientes" (abertos, fechados, em aberto, no prazo e os 3 principais motivos). O texto copiado traz as mesmas informações.
+**Para caber em uma A4:** só na impressão, a área responsável de cada sistema some da tabela, o resumo usa 14 px e os espaços entre seções ficaram menores. Medido com o PDF do navegador: uma página, com cerca de 44 px de folga.
+
 ---
 
 ## Técnicas

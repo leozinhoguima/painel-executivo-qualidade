@@ -62,6 +62,18 @@ export function carregarBaseDemonstracao(): BaseQualidade {
 
 let chamadosEmCache: BaseChamados | null = null;
 
+/**
+ * Para telas em que os chamados complementam os testes: se o arquivo não puder
+ * ser lido, a tela segue só com os testes em vez de mostrar erro.
+ */
+export function carregarChamadosOuNada(): BaseChamados | undefined {
+  try {
+    return carregarChamados();
+  } catch {
+    return undefined;
+  }
+}
+
 /** Chamados da central de atendimento (fictícia), exportados para `data/chamados/`. */
 export function carregarChamados(): BaseChamados {
   if (chamadosEmCache && process.env.NODE_ENV === "production") return chamadosEmCache;

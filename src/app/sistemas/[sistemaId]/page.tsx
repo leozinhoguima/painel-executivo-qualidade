@@ -8,19 +8,10 @@ import { ChamadosDoSistema } from "@/componentes/visoes/gerente/ChamadosDoSistem
 import { IndicadoresGerente } from "@/componentes/visoes/gerente/IndicadoresGerente";
 import { SucessoPorFuncionalidade } from "@/componentes/visoes/gerente/SucessoPorFuncionalidade";
 import { TabelaDefeitos } from "@/componentes/visoes/gerente/TabelaDefeitos";
-import { carregarBase, carregarChamados } from "@/dados/repositorio";
+import { carregarBase, carregarChamadosOuNada } from "@/dados/repositorio";
 import { lerOrigem, lerPeriodo } from "@/dominio/regras/periodo";
 import { montarVisaoGerente } from "@/dominio/visoes/gerente";
 import { formatarJanela } from "@/lib/formatacao";
-
-/** Os chamados complementam a visão: se não puderem ser lidos, a tela segue só com os testes. */
-function chamadosOuNada() {
-  try {
-    return carregarChamados();
-  } catch {
-    return undefined;
-  }
-}
 
 export async function generateMetadata(props: PageProps<"/sistemas/[sistemaId]">): Promise<Metadata> {
   const { sistemaId } = await props.params;
@@ -38,7 +29,7 @@ export default async function VisaoGerente(props: PageProps<"/sistemas/[sistemaI
   const sistema = base.catalogo.sistemas.find((s) => s.id === sistemaId);
   if (!sistema) notFound();
 
-  const visao = montarVisaoGerente(base, sistemaId, periodo, chamadosOuNada());
+  const visao = montarVisaoGerente(base, sistemaId, periodo, carregarChamadosOuNada());
   const voltar =
     origem === "sistemas" ? { href: "/sistemas", rotulo: "Sistemas" } : { href: "/", rotulo: "Visão executiva" };
 

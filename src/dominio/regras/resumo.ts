@@ -29,10 +29,17 @@ export interface EntradaResumo {
   taxaSemana: number | null;
   variacaoPontos: number | null;
   aguardandoDecisao: number;
+  /** Chamados de clientes na semana (opcional). */
+  chamados?: {
+    abertos: number;
+    variacao: number | null;
+    principalMotivo: { motivo: string; sistema: Pick<Sistema, "nome" | "artigo"> } | null;
+  };
 }
 
 const ehPlural = (artigo: Artigo) => artigo.endsWith("s");
 const DE: Record<Artigo, string> = { o: "do", a: "da", os: "dos", as: "das" };
+const EM: Record<Artigo, string> = { o: "no", a: "na", os: "nos", as: "nas" };
 
 function tempoEmAberto(dias: number): string {
   return dias <= 0 ? "em aberto desde hoje" : `em aberto há ${pluralizar(dias, "dia", "dias")}`;
@@ -103,6 +110,27 @@ export function gerarResumoSemana(entrada: EntradaResumo): TrechoResumo[] {
       const texto = formatarPontos(pontos).replace("+", "");
       const unidade = Math.round(pontos * 10) / 10 === 1 ? "ponto" : "pontos";
       t(` A taxa geral de sucesso ${direcao} ${texto} ${unidade}, para ${taxa}.`);
+    }
+  }
+
+  if (entrada.chamados) {
+    const { abertos, variacao, principalMotivo } = entrada.chamados;
+    const pontos = variacao === null ? null : Math.round(variacao * 100);
+    const comparacao =
+      pontos === null
+        ? ""
+        : pontos === 0
+          ? ", estável em relação à semana anterior"
+          : ` (${pontos > 0 ? "+" : "−"}${Math.abs(pontos)}% em relação à semana anterior)`;
+    if (abertos === 0) {
+      t(" Os clientes não abriram chamados na semana.");
+    } else {
+      t(` Os clientes abriram ${pluralizar(abertos, "chamado", "chamados")}${comparacao}`);
+      if (principalMotivo) {
+        t(`; o principal motivo foi ${minusculaInicial(principalMotivo.motivo)}, ${EM[principalMotivo.sistema.artigo]} `);
+        t(principalMotivo.sistema.nome, true);
+      }
+      t(".");
     }
   }
 
