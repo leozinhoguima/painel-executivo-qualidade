@@ -126,4 +126,4 @@ Tokens: fundo #F4F6F9, cartão branco com borda #E2E8F0 e raio 12px, texto #0F17
 | 8 | Deploy na Vercel (https://painel-executivo-qualidade.vercel.app) + README com screenshots | Concluída (validada) |
 | 9 | Sustentação (`/sustentacao`): central de chamados fictícia, regras, 6 indicadores, 7 gráficos, robô atualizando | Concluída (validada) |
 | 10.1 | Ligação chamado ↔ defeito + chamados na visão do gerente + lista técnica (`/sustentacao/chamados`) | Concluída (validada) |
-| 10.2 | Chamados na visão executiva (resumo, semáforo, problemas) e no relatório semanal (uma folha A4) | Concluída — aguardando validação |
+| 10.2 | Chamados na visão executiva (resumo, semáforo, problemas) e no relatório semanal (uma folha A4); botão "Baixar relatório (PDF)" abre a janela de salvar | Concluída (validada) |
