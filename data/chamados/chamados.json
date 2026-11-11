@@ -1,7 +1,7 @@
 {
   "versao": 1,
   "aviso": "Chamados FICTÍCIOS gerados automaticamente (seed fixa) para demonstração. Não representam clientes nem sistemas reais.",
-  "geradoAte": "2026-11-11T13:58:14-03:00",
+  "geradoAte": "2026-11-11T14:25:22-03:00",
   "chamados": [
     {"codigo":"CH-20260501-001","sistemaId":"transferencias","categoria":"acesso","prioridade":"media","canal":"app","motivo":"Código de confirmação não chega","eventos":[{"tipo":"abertura","dataHora":"2026-05-01T08:04:00-03:00"},{"tipo":"fechamento","dataHora":"2026-05-01T13:21:00-03:00"}]},
     {"codigo":"CH-20260501-002","sistemaId":"cartoes","categoria":"acesso","prioridade":"media","canal":"central","motivo":"Código de confirmação não chega","eventos":[{"tipo":"abertura","dataHora":"2026-05-01T08:30:00-03:00"},{"tipo":"fechamento","dataHora":"2026-05-02T21:24:00-03:00"}]},
@@ -5499,7 +5499,7 @@
     {"codigo":"CH-20261110-039","sistemaId":"pix","funcionalidadeId":"pix-qrcode","categoria":"erro-transacao","prioridade":"alta","canal":"central","motivo":"Pagamento por QR Code falha às vezes","eventos":[{"tipo":"abertura","dataHora":"2026-11-10T14:50:00-03:00"}]},
     {"codigo":"CH-20261110-040","sistemaId":"transferencias","categoria":"lentidao","prioridade":"media","canal":"app","motivo":"Operação demora a ser confirmada","eventos":[{"tipo":"abertura","dataHora":"2026-11-10T14:55:00-03:00"}]},
     {"codigo":"CH-20261110-041","sistemaId":"pix","categoria":"duvida","prioridade":"media","canal":"app","motivo":"Cliente não encontra a opção no aplicativo","eventos":[{"tipo":"abertura","dataHora":"2026-11-10T14:59:00-03:00"},{"tipo":"fechamento","dataHora":"2026-11-11T02:37:00-03:00"}]},
-    {"codigo":"CH-20261110-042","sistemaId":"cartoes","funcionalidadeId":"ct-limite","categoria":"lentidao","prioridade":"media","canal":"app","motivo":"Limite do cartão demora a aparecer","eventos":[{"tipo":"abertura","dataHora":"2026-11-10T15:37:00-03:00"}]},
+    {"codigo":"CH-20261110-042","sistemaId":"cartoes","funcionalidadeId":"ct-limite","categoria":"lentidao","prioridade":"media","canal":"app","motivo":"Limite do cartão demora a aparecer","eventos":[{"tipo":"abertura","dataHora":"2026-11-10T15:37:00-03:00"},{"tipo":"fechamento","dataHora":"2026-11-11T14:10:00-03:00"}]},
     {"codigo":"CH-20261110-043","sistemaId":"cartoes","funcionalidadeId":"ct-limite","categoria":"lentidao","prioridade":"media","canal":"app","motivo":"Limite do cartão demora a aparecer","eventos":[{"tipo":"abertura","dataHora":"2026-11-10T16:09:00-03:00"},{"tipo":"fechamento","dataHora":"2026-11-11T10:41:00-03:00"}]},
     {"codigo":"CH-20261110-044","sistemaId":"cartoes","funcionalidadeId":"ct-limite","categoria":"lentidao","prioridade":"media","canal":"central","motivo":"Limite do cartão demora a aparecer","eventos":[{"tipo":"abertura","dataHora":"2026-11-10T16:19:00-03:00"}]},
     {"codigo":"CH-20261110-045","sistemaId":"transferencias","categoria":"acesso","prioridade":"media","canal":"app","motivo":"Senha bloqueada após tentativas","eventos":[{"tipo":"abertura","dataHora":"2026-11-10T16:40:00-03:00"}]},
@@ -5545,6 +5545,7 @@
     {"codigo":"CH-20261111-025","sistemaId":"transferencias","categoria":"duvida","prioridade":"media","canal":"app","motivo":"Cliente não encontra a opção no aplicativo","eventos":[{"tipo":"abertura","dataHora":"2026-11-11T12:45:00-03:00"}]},
     {"codigo":"CH-20261111-026","sistemaId":"abertura-conta","funcionalidadeId":"ac-documentos","categoria":"indisponibilidade","prioridade":"critica","canal":"app","motivo":"Cadastro travado no envio de documentos","eventos":[{"tipo":"abertura","dataHora":"2026-11-11T12:48:00-03:00"}]},
     {"codigo":"CH-20261111-027","sistemaId":"cartoes","categoria":"duvida","prioridade":"media","canal":"agencia","motivo":"Cliente não encontra a opção no aplicativo","eventos":[{"tipo":"abertura","dataHora":"2026-11-11T13:21:00-03:00"}]},
-    {"codigo":"CH-20261111-028","sistemaId":"abertura-conta","funcionalidadeId":"ac-documentos","categoria":"indisponibilidade","prioridade":"critica","canal":"app","motivo":"Cadastro travado no envio de documentos","eventos":[{"tipo":"abertura","dataHora":"2026-11-11T13:43:00-03:00"}]}
+    {"codigo":"CH-20261111-028","sistemaId":"abertura-conta","funcionalidadeId":"ac-documentos","categoria":"indisponibilidade","prioridade":"critica","canal":"app","motivo":"Cadastro travado no envio de documentos","eventos":[{"tipo":"abertura","dataHora":"2026-11-11T13:43:00-03:00"}]},
+    {"codigo":"CH-20261111-029","sistemaId":"transferencias","categoria":"lentidao","prioridade":"baixa","canal":"central","motivo":"Operação demora a ser confirmada","eventos":[{"tipo":"abertura","dataHora":"2026-11-11T14:12:00-03:00"}]}
   ]
 }
