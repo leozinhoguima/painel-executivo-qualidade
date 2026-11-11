@@ -42,7 +42,7 @@ Um painel em três níveis de detalhe, alimentado **automaticamente** por uma su
     <td><img src="docs/imagens/visao-tecnica.png" alt="Visão técnica: execuções com mensagem técnica e tradução" /></td>
   </tr>
   <tr>
-    <td align="center"><b>Visão do gerente</b>: do problema à funcionalidade</td>
+    <td align="center"><b>Visão do gerente</b>: do defeito aos chamados de clientes</td>
     <td align="center"><b>Visão técnica</b>: erro original → linguagem de negócio</td>
   </tr>
   <tr>
@@ -50,7 +50,7 @@ Um painel em três níveis de detalhe, alimentado **automaticamente** por uma su
     <td><img src="docs/imagens/celular.png" alt="Visão executiva no celular" width="260" /></td>
   </tr>
   <tr>
-    <td align="center"><b>Relatório semanal</b>: uma folha, pronto para PDF</td>
+    <td align="center"><b>Relatório semanal</b>: testes e chamados em uma folha, pronto para PDF</td>
     <td align="center"><b>Celular</b>: a visão do diretor funciona em qualquer tela</td>
   </tr>
 </table>
