@@ -55,6 +55,10 @@ Um painel em três níveis de detalhe, alimentado **automaticamente** por uma su
   </tr>
 </table>
 
+**Sustentação:** os chamados em produção por dia, semana ou mês, com comparativos entre dias e entre meses, a divisão por tipo, prioridade e sistema, e os principais problemas. Os incidentes que os testes pegaram aparecem também aqui, como chamados de clientes.
+
+![Sustentação: chamados em produção](docs/imagens/sustentacao.png)
+
 ---
 
 ## Como funciona a automação
