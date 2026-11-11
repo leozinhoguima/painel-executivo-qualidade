@@ -157,6 +157,19 @@ Cada decisão traz o contexto e o porquê, para que possa ser explicada a um ges
 **Decisão:** o roteiro (`scripts/chamados/cenarios.ts`) tem um volume de base e "surtos" ligados a funcionalidades. De agosto em diante, os surtos têm as mesmas datas dos incidentes do histórico de testes; os que seguem em aberto não têm fim. A cada rodada, o robô regrava os chamados até a data da rodada.
 **Por quê:** a sustentação e os testes têm a mesma data de referência, e a tela não fica parada. Exemplos da narrativa: o problema longo de Cartões em setembro leva a fila a 385 chamados e, com correções apressadas, a uma onda de reaberturas em outubro (15% na semana 41); na semana 45, "Cadastro travado no envio de documentos" lidera os problemas.
 
+### D32. Chamado ligado a defeito pela funcionalidade e pela data
+**Decisão:** um chamado fica ligado a um defeito quando é da mesma funcionalidade e foi aberto entre **1 dia antes da primeira falha** e **1 dia depois da correção** (ou a qualquer momento, se o defeito segue aberto). Se dois defeitos servirem, vale o aberto mais recentemente. Chamados sem funcionalidade (dúvidas, senha…) nunca têm defeito. Regra pura em `src/dominio/regras/vinculo.ts`.
+**Por quê:** a tolerância depois da correção cobre o cliente que reclama com atraso. A tolerância antes da primeira falha não estava no plano: como os testes rodam a cada 12 horas, o problema pode começar até meio dia antes de ser detectado, e sem ela os primeiros chamados de cada incidente ficariam sem defeito.
+**Resultado:** na visão do gerente, o AC-104 (validação de documentos) aparece com dezenas de chamados de clientes ligados, e o número leva à lista desses chamados.
+
+### D33. Chamados do sistema na visão do gerente, no mesmo período
+**Decisão:** o bloco "Chamados em produção" usa o mesmo período do seletor (7, 30 ou 90 dias): abertos com variação, em aberto agora e resolvidos no prazo, mais barras por dia (7 e 30 dias) ou por semana (90 dias). A tabela de defeitos ganhou a coluna "Chamados de clientes".
+**Por quê:** o gerente vê, na mesma tela, o defeito técnico e o efeito dele nos clientes. Se os chamados não puderem ser lidos, a tela continua só com os testes.
+
+### D34. Lista técnica de chamados
+**Decisão:** `/sustentacao/chamados` lista cada chamado, do mais recente para o mais antigo, com filtros de período (pela abertura), sistema, funcionalidade, tipo, prioridade e situação (em aberto, fora do prazo, reabertos, fechados). Período padrão: 30 dias. A situação é sempre a da data de referência. "Principais problemas" e a coluna de chamados do gerente levam à lista já filtrada (por motivo ou por defeito). Com um defeito escolhido, o período é ignorado e aparecem todos os chamados ligados a ele, para que o total bata com o número da tabela de defeitos.
+**Por quê:** completa a navegação gestor → investigação, como a visão técnica faz com as execuções de teste.
+
 ---
 
 ## Técnicas
@@ -289,6 +302,10 @@ Cada decisão traz o contexto e o porquê, para que possa ser explicada a um ges
 ### T28. Tabelas acessíveis dentro de um `div`
 **Decisão:** cada gráfico tem uma tabela equivalente para leitores de tela, envolvida por um `div` com `sr-only`.
 **Por quê:** uma `<table>` ignora a altura de 1 px do `sr-only`; a tabela de 90 linhas da fila esticava a página e criava rolagem horizontal no celular.
+
+### T29. Contêiner de rolagem das tabelas com `relative`
+**Decisão:** o `div` com rolagem horizontal das tabelas (defeitos, execuções e chamados) é `relative`.
+**Por quê:** os textos `sr-only` dentro das células têm posição absoluta; sem um ancestral posicionado, eles "escapavam" da área de rolagem e criavam rolagem horizontal na página inteira no celular (745 px numa tela de 390 px).
 
 ### T14. Nomes de arquivo dos mockups
 **Decisão:** renomeados para `visao-diretor.png` e `visao-gerente.png` (sem acentos, espaços ou `@`).

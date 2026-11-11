@@ -19,7 +19,7 @@ function SeloResultado({ resultado }: { resultado: LinhaExecucao["resultado"] })
 /** Lista técnica de execuções; falhas mostram a mensagem original e a tradução de negócio. */
 export function TabelaExecucoes({ linhas }: { linhas: LinhaExecucao[] }) {
   return (
-    <div className="-mx-5 overflow-x-auto px-5 sm:-mx-6 sm:px-6" tabIndex={0} aria-labelledby="titulo-execucoes">
+    <div className="relative -mx-5 overflow-x-auto px-5 sm:-mx-6 sm:px-6" tabIndex={0} aria-labelledby="titulo-execucoes">
       <table className="w-full min-w-[920px] text-left text-[14px]">
         <caption className="sr-only">Execuções de teste, da mais recente para a mais antiga</caption>
         <thead>

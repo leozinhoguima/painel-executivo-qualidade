@@ -1,4 +1,5 @@
-import { ArrowDown, ArrowUp, Minus, Sparkles } from "lucide-react";
+import { ArrowDown, ArrowRight, ArrowUp, Minus, Sparkles } from "lucide-react";
+import Link from "next/link";
 import { Cartao } from "@/componentes/ui/Cartao";
 import type { LinhaProblema, VisaoSustentacao } from "@/dominio/visoes/sustentacao";
 import { formatarInteiro, pluralizar } from "@/lib/formatacao";
@@ -32,11 +33,28 @@ function Tendencia({ p }: { p: LinhaProblema }) {
   );
 }
 
-/** Os motivos que mais geraram chamados no período, com tendência e fila em aberto. */
+/**
+ * Os motivos que mais geraram chamados no período, com tendência e fila em aberto.
+ * Cada motivo leva à lista técnica, já filtrada (7 dias para dia e semana; 30 para mês).
+ */
 export function ProblemasSustentacao({ visao }: { visao: VisaoSustentacao }) {
   const problemas = visao.problemas;
+  const periodoLista = visao.periodo.recorte === "mes" ? 30 : 7;
   return (
-    <Cartao titulo="Principais problemas" idTitulo="titulo-problemas-sustentacao" className="h-full">
+    <Cartao
+      titulo="Principais problemas"
+      idTitulo="titulo-problemas-sustentacao"
+      className="h-full"
+      acessorio={
+        <Link
+          href="/sustentacao/chamados"
+          className="inline-flex min-h-11 items-center gap-1 font-medium text-marca hover:underline sm:min-h-0"
+        >
+          Ver todos os chamados
+          <ArrowRight aria-hidden="true" className="size-3.5" />
+        </Link>
+      }
+    >
       <p className="-mt-2 mb-4 text-[13px] text-tinta-suave">
         Motivos com mais chamados · {visao.rotuloPeriodo}
       </p>
@@ -48,7 +66,13 @@ export function ProblemasSustentacao({ visao }: { visao: VisaoSustentacao }) {
             <li key={`${p.sistemaId}-${p.motivo}`} className="flex gap-4 py-3">
               <span className="numeros w-5 shrink-0 pt-0.5 text-[14px] font-semibold text-tinta-suave">{i + 1}</span>
               <div className="min-w-0 flex-1">
-                <p className="text-[15px] font-semibold">{p.motivo}</p>
+                <Link
+                  href={`/sustentacao/chamados?periodo=${periodoLista}&sistema=${p.sistemaId}&motivo=${encodeURIComponent(p.motivo)}`}
+                  className="text-[15px] font-semibold hover:text-marca hover:underline"
+                >
+                  {p.motivo}
+                  <span className="sr-only">: ver chamados</span>
+                </Link>
                 <p className="mt-0.5 text-[13px] text-tinta-suave">
                   {p.sistemaNome} · {pluralizar(p.emAberto, "chamado em aberto", "chamados em aberto")}
                 </p>

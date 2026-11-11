@@ -3,20 +3,24 @@ import { Cartao } from "@/componentes/ui/Cartao";
 import { SeloSeveridade } from "@/componentes/ui/Selos";
 import { ROTULO_SITUACAO } from "@/dominio/rotulos";
 import type { LinhaDefeito } from "@/dominio/visoes/gerente";
-import { pluralizar } from "@/lib/formatacao";
+import { formatarInteiro, pluralizar } from "@/lib/formatacao";
 
 /**
  * Defeitos em aberto do sistema na data da última execução.
- * A funcionalidade leva às falhas dela na visão técnica (mesmo período).
+ * A funcionalidade leva às falhas dela na visão técnica (mesmo período);
+ * o número de chamados leva aos chamados de clientes ligados ao defeito.
  */
 export function TabelaDefeitos({
   defeitos,
   sistemaId,
   periodo,
+  comChamados,
 }: {
   defeitos: LinhaDefeito[];
   sistemaId: string;
   periodo: number;
+  /** Exibe a coluna de chamados ligados (falsa se os chamados não puderam ser lidos). */
+  comChamados: boolean;
 }) {
   return (
     <Cartao titulo="Defeitos em aberto" idTitulo="titulo-defeitos">
@@ -25,8 +29,8 @@ export function TabelaDefeitos({
           Nenhum defeito em aberto neste sistema.
         </p>
       ) : (
-        <div className="-mx-5 overflow-x-auto px-5 sm:-mx-6 sm:px-6" tabIndex={0} aria-labelledby="titulo-defeitos">
-          <table className="w-full min-w-[680px] text-left text-[14px]">
+        <div className="relative -mx-5 overflow-x-auto px-5 sm:-mx-6 sm:px-6" tabIndex={0} aria-labelledby="titulo-defeitos">
+          <table className="w-full min-w-[780px] text-left text-[14px]">
             <caption className="sr-only">Defeitos em aberto, do mais grave para o menos grave</caption>
             <thead>
               <tr className="border-b border-divisor text-[13px] text-tinta-suave">
@@ -34,6 +38,11 @@ export function TabelaDefeitos({
                 <th scope="col" className="py-2.5 pr-4 font-medium">Problema</th>
                 <th scope="col" className="py-2.5 pr-4 font-medium">Severidade</th>
                 <th scope="col" className="py-2.5 pr-4 font-medium">Situação</th>
+                {comChamados && (
+                  <th scope="col" className="py-2.5 pr-4 text-right font-medium">
+                    Chamados de clientes
+                  </th>
+                )}
                 <th scope="col" className="py-2.5 text-right font-medium">Aberto há</th>
               </tr>
             </thead>
@@ -60,6 +69,21 @@ export function TabelaDefeitos({
                     </span>
                     {d.responsavel && <span className="block text-[12px] text-tinta-suave">{d.responsavel}</span>}
                   </td>
+                  {comChamados && (
+                    <td className="numeros py-3 pr-4 text-right whitespace-nowrap">
+                      {d.chamados > 0 ? (
+                        <Link
+                          href={`/sustentacao/chamados?defeito=${d.codigo}`}
+                          className="font-semibold text-marca hover:underline"
+                        >
+                          {formatarInteiro(d.chamados)}
+                          <span className="sr-only"> chamados ligados a {d.codigo}: ver lista</span>
+                        </Link>
+                      ) : (
+                        <span className="text-tinta-suave">Nenhum</span>
+                      )}
+                    </td>
+                  )}
                   <td className="numeros py-3 text-right whitespace-nowrap">
                     {d.diasAberto <= 0 ? "Menos de 1 dia" : pluralizar(d.diasAberto, "dia", "dias")}
                   </td>

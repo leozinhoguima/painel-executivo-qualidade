@@ -103,6 +103,7 @@ Ao mudar `scripts/chamados/cenarios.ts` ou o gerador, rode `npm run dados:chamad
 - Testes de coerência das visões usam só o histórico fictício (`carregarBaseDemonstracao`), para não quebrar quando rodadas reais forem importadas.
 - Mensagens de falha da suíte seguem o formato que `data/traducoes.json` reconhece; ao criar um teste novo, use os helpers de `tests/api/apoio.ts`.
 - Sustentação (`/sustentacao?recorte=dia|semana|mes`, padrão semana): chamados guardam só eventos (abertura → fechamento → reabertura → fechamento); tudo é derivado. Prazo da abertura ao 1º fechamento: crítica 4 h, alta 1 dia, média 3 dias, baixa 5 dias; meta 90% no prazo e reabertura até 5%. Dia compara com o mesmo dia da semana anterior; mês compara os mesmos dias do mês anterior. Referência = `geradoAte` do arquivo, que o robô alinha à última rodada.
+- Chamado ↔ defeito: mesma funcionalidade e abertura entre 1 dia antes da 1ª falha e 1 dia depois da correção (`regras/vinculo.ts`). Lista `/sustentacao/chamados` (padrão 30 dias); `?defeito=` ignora o período.
 - Chamados fictícios desde 01/05/2026, seed por dia: regerar mais tarde mantém o passado. Surtos seguem as datas dos incidentes de teste; os em aberto não têm fim. Testes da visão geram os chamados em memória até 09/11/2026.
 
 ## Referência visual
@@ -123,4 +124,5 @@ Tokens: fundo #F4F6F9, cartão branco com borda #E2E8F0 e raio 12px, texto #0F17
 | 7 | GitHub Actions: rodada às 06:00/18:00 + CI; repositório público | Concluída (validada) |
 | 8 | Deploy na Vercel (https://painel-executivo-qualidade.vercel.app) + README com screenshots | Concluída (validada) |
 | 9 | Sustentação (`/sustentacao`): central de chamados fictícia, regras, 6 indicadores, 7 gráficos, robô atualizando | Concluída (validada) |
-| 10 | Cruzar testes e chamados (gerente, executiva, relatório) + lista técnica de chamados | Planejada |
+| 10.1 | Ligação chamado ↔ defeito + chamados na visão do gerente + lista técnica (`/sustentacao/chamados`) | Concluída — aguardando validação |
+| 10.2 | Chamados na visão executiva (resumo, semáforo, problemas) e no relatório semanal (uma folha A4) | Planejada |

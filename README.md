@@ -34,7 +34,7 @@ Um painel em três níveis de detalhe, alimentado **automaticamente** por uma su
 | **Visão do gerente** | Gerência do sistema | Sucesso por funcionalidade, defeitos em aberto e situação, nos últimos 7, 30 ou 90 dias |
 | **Visão técnica** | Time de QA e desenvolvimento | Cada execução com a mensagem de erro original **e** a tradução de negócio |
 | **Relatório semanal** | Quem repassa a informação | Uma folha A4 para imprimir ou salvar em PDF, mais o texto pronto para e-mail |
-| **Sustentação** | Gestão de sustentação | Chamados em produção por dia, semana ou mês: abertos, fechados, reabertos, fila, prazo de atendimento, comparativos e principais problemas |
+| **Sustentação** | Gestão de sustentação | Chamados em produção por dia, semana ou mês: abertos, fechados, reabertos, fila, prazo de atendimento, comparativos, principais problemas e a lista de cada chamado com o defeito que o causou |
 
 <table>
   <tr>
@@ -97,6 +97,7 @@ Todos os indicadores são **calculados a partir dos registros**, nunca digitados
 | **Chamados** | abertos, fechados e reabertos são eventos no período; "em aberto" = o último evento até a data é abertura ou reabertura |
 | **Prazo de atendimento** | da abertura ao primeiro fechamento: crítica 4 h, alta 1 dia, média 3 dias, baixa 5 dias (meta: 90% no prazo) |
 | **Taxa de reabertura** | reaberturas ÷ fechamentos do período (meta: até 5%) |
+| **Chamado ↔ defeito** | mesma funcionalidade, aberto entre 1 dia antes da primeira falha e 1 dia depois da correção |
 
 **Camada de tradução:** cada mensagem técnica passa por regras ([`data/traducoes.json`](data/traducoes.json)) que a convertem em linguagem de negócio.
 
@@ -195,7 +196,7 @@ Next.js 16 (App Router) · React 19 · TypeScript 5.9 · Tailwind CSS 4 · Recha
 ## Evoluções possíveis
 
 - Integração com um sistema de chamados real (por exemplo, o Jira) no lugar do arquivo de acompanhamento e da central fictícia.
-- Cruzar testes e chamados nas telas: chamados por sistema na visão do gerente e na visão executiva.
+- Levar os chamados à visão executiva e ao relatório semanal.
 - Banco de dados quando o volume de execuções justificar.
 - Envio automático do relatório semanal por e-mail.
 - Metas de sucesso por sistema e alertas quando um sistema mudar de status.

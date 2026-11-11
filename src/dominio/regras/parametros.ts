@@ -64,3 +64,11 @@ export const MESES_COMPARATIVO = 6;
 export const SEMANAS_MEDIA_DIA_SEMANA = 8;
 /** Quantidade de itens em "Principais problemas". */
 export const LIMITE_PROBLEMAS_SUSTENTACAO = 5;
+
+/**
+ * Ligação chamado ↔ defeito: mesma funcionalidade e abertura do chamado entre
+ * 1 dia antes da primeira falha (os testes rodam a cada 12 h, então o problema
+ * pode começar antes de ser detectado) e 1 dia depois da correção (o cliente
+ * costuma reclamar com atraso).
+ */
+export const TOLERANCIA_VINCULO_MS = DIA_MS;
